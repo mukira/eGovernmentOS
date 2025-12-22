@@ -1,0 +1,9 @@
+{
+    "name": "forecast-brief-generator",
+    "version": "1.0.0",
+    "description": "Cloud Function to generate policy briefs using Vertex AI",
+    "main": "index.js",
+    "dependencies": {
+        "@google-cloud/vertexai": "^1.0.0"
+    }
+}

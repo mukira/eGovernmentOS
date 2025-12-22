@@ -1,0 +1,32 @@
+# BrowserOS macOS Debug Build Configuration (Intel Mac / x64)
+#
+# Created for Mukira to support x64 debug builds via official config method.
+
+build:
+  type: debug
+  architecture: x64  # Forced to x64 for Intel Mac
+
+gn_flags:
+  file: build/config/gn/flags.macos.debug.gn
+
+# Explicit module execution order
+modules:
+  # Phase 1: Setup
+  - git_setup
+  - sparkle_setup
+
+  # Phase 2: Patches & Resources
+  - resources
+  - chromium_replace
+  - string_replaces
+  - patches
+
+  # Phase 3: Build
+  - configure
+  - compile
+
+  # Phase 4: Package
+  - package_macos
+
+notifications:
+  slack: false

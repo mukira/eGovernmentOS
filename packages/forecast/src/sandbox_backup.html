@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .legend-container {
+            position: absolute;
+            bottom: 20px;
+            right: 60px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            display: none;
+            /* Hidden by default, shown via JS */
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            z-index: 1000;
+        }
+
+        .legend-titlebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .legend-source {
+            color: #666;
+            font-size: 10px;
+        }
+
+        .legend-gradient {
+            height: 15px;
+            /* Split gradient to show the two distinct categories */
+            background: linear-gradient(to right, #00BFFF 40%, #ff0000 60%);
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .legend-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div class="legend-container" id="legendContainer">
+        <div class="legend-titlebar">
+            <span class="legend-title">FLOOD DETECTION</span>
+            <span class="legend-source">NASA MODIS • 2-Day</span>
+        </div>
+        <div class="legend-gradient"></div>
+        <div class="legend-labels">
+            <span>Normal Water</span>
+            <span>Flood Detected</span>
+        </div>
+    </div>
+    <script>
+        let map;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: -1.2921, lng: 36.8219 }, // Nairobi
+                zoom: 7,
+                disableDefaultUI: true,
+                zoomControl: true,
+                mapTypeId: 'terrain',
+                mapId: "DEMO_MAP_ID"
+            });
+
+            google.maps.event.addListener(map, 'idle', () => {
+                window.parent.postMessage({ type: 'MAP_IDLE' }, '*');
+            });
+
+            const geocoder = new google.maps.Geocoder();
+            let currentTileLayer = null;
+
+            const snapTo8Day = (date) => {
+                const start = new Date(date.getFullYear(), 0, 1);
+                const diff = date - start;
+                const oneDay = 1000 * 60 * 60 * 24;
+                const dayOfYear = Math.floor(diff / oneDay);
+                const snappedDOY = (dayOfYear) - (dayOfYear % 8);
+                const snappedDate = new Date(date.getFullYear(), 0, 1 + snappedDOY);
+                return snappedDate.toISOString().split('T')[0];
+            };
+
+            // Canvas Filter: Removes non-water pixels from Satellite Imagery
+            class FilteredMapType {
+                constructor(tileSize, layerConfig, dateStr) {
+                    this.tileSize = tileSize;
+                    this.config = layerConfig;
+                    this.dateStr = dateStr;
+                    this.name = 'Filtered Layer';
+                }
+
+                getTile(coord, zoom, ownerDocument) {
+                    const div = ownerDocument.createElement('div');
+                    div.style.width = this.tileSize.width + 'px';
+                    div.style.height = this.tileSize.height + 'px';
+
+                    const canvas = ownerDocument.createElement('canvas');
+                    canvas.width = this.tileSize.width;
+                    canvas.height = this.tileSize.height;
+                    div.appendChild(canvas);
+
+                    const ctx = canvas.getContext('2d');
+
+                    const img = new Image();
+                    img.crossOrigin = "Anonymous"; // Required for pixel manipulation
+
+                    // Fetch from GIBS
+                    const url = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${this.config.name}/default/${this.dateStr}/GoogleMapsCompatible_Level${this.config.zoom}/${zoom}/${coord.y}/${coord.x}.${this.config.format}`;
+
+                    img.src = url;
+
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0);
+
+                        // PIXEL FILTERING LOGIC
+                        if (this.config.isWaterLayer) {
+                            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            const data = imgData.data;
+
+                            for (let i = 0; i < data.length; i += 4) {
+                                const r = data[i];
+                                const g = data[i + 1];
+                                const b = data[i + 2];
+
+                                // NASA L3 Flood Color Key:
+                                // Surface Water: Blue (approx R:0-100, G:0-100, B:150-255)
+                                // Recurring Water: Cyan
+                                // Land/Cloud: Grey/White/Brown
+
+                                // Filter: If it's NOT Blue-ish, make transparent
+                                // High Blue channel relative to Red/Green is a good heuristic
+
+                                // Re-Coloring for High Contrast (GIS Style)
+                                const isBlue = (b > r + 20) && (b > g + 10);
+                                const isRed = (r > b + 20) && (r > g + 20);
+
+                                if (isRed) {
+                                    // FLOOD: Bright Red, Fully Opaque
+                                    data[i] = 230;     // R
+                                    data[i + 1] = 0;     // G
+                                    data[i + 2] = 0;     // B
+                                    data[i + 3] = 255;   // Alpha
+                                } else if (isBlue) {
+                                    // WATER: Deep GIS Blue, Medium Opacity (Context)
+                                    data[i] = 0;       // R
+                                    data[i + 1] = 100;   // G
+                                    data[i + 2] = 255;   // B
+                                    data[i + 3] = 150;   // Alpha (0.6) - looks like water bodies, not alerts
+                                } else {
+                                    // LAND/CLOUD: Transparent
+                                    data[i + 3] = 0;
+                                }
+                            }
+                            ctx.putImageData(imgData, 0, 0);
+                        }
+                    };
+
+                    return div;
+                }
+            }
+
+            // Helper: Get Layer
+            const getGibsLayer = (layerId) => {
+                const today = new Date();
+                let config = null;
+                let dateStr = "";
+
+                if (layerId === 'VEGETATION') {
+                    today.setDate(today.getDate() - 16);
+                    dateStr = snapTo8Day(today);
+                    config = { name: 'MODIS_Terra_NDVI_8Day', zoom: 9, format: 'png', opacity: 0.6 };
+                    // NDVI has its own color map, usually fine as is.
+                    // Return standard ImageMapType for speed if no filtering needed.
+                    return new google.maps.ImageMapType({
+                        getTileUrl: function (coord, zoom) {
+                            return `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${zoom}/${coord.y}/${coord.x}.${config.format}`;
+                        },
+                        tileSize: new google.maps.Size(256, 256), opacity: 0.6
+                    });
+
+                } else if (layerId === 'HEAT') {
+                    today.setDate(today.getDate() - 1);
+                    dateStr = today.toISOString().split('T')[0];
+                    config = { name: 'MODIS_Terra_Land_Surface_Temp_Day', zoom: 9, format: 'png', opacity: 0.6 };
+                    return new google.maps.ImageMapType({
+                        getTileUrl: function (coord, zoom) {
+                            return `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${zoom}/${coord.y}/${coord.x}.${config.format}`;
+                        },
+                        tileSize: new google.maps.Size(256, 256), opacity: 0.6
+                    });
+
+                } else if (layerId === 'FLOOD') {
+                    // *** REAL FLOOD DATA WITH FILTERING ***
+                    today.setDate(today.getDate() - 4);
+                    dateStr = today.toISOString().split('T')[0];
+
+                    config = {
+                        name: 'MODIS_Combined_Flood_2-Day',
+                        zoom: 9,
+                        format: 'png',
+                        opacity: 1.0, // Max opacity, we control alpha in canvas
+                        isWaterLayer: true // Trigger Filter
+                    };
+
+                    // Use Canvas Filtered Layer
+                    return new FilteredMapType(new google.maps.Size(256, 256), config, dateStr);
+                }
+
+                // ... other layers ...
+                return null;
+            };
+
+            window.addEventListener('message', (event) => {
+                const message = event.data;
+
+                if (message.type === 'PAN_TO') {
+                    geocoder.geocode({ 'address': message.region + ', Kenya' }, function (results, status) {
+                        if (status === 'OK') {
+                            map.setCenter(results[0].geometry.location);
+                            map.setZoom(9);
+                        } else {
+                            console.error('Geocode failed: ' + status);
+                        }
+                    });
+                }
+
+                else if (message.type === 'SET_LAYER') {
+                    console.log("Setting Layer:", message.layerId);
+
+                    if (currentTileLayer) {
+                        map.overlayMapTypes.removeAt(0);
+                        currentTileLayer = null;
+                    }
+
+                    // Update Legend UI
+                    updateLegend(message.layerId);
+
+                    if (!message.layerId) return;
+
+                    const layer = getGibsLayer(message.layerId);
+                    if (layer) {
+                        map.overlayMapTypes.push(layer);
+                        currentTileLayer = layer;
+                    }
+                }
+            });
+
+            // Dynamic Legend Logic
+            const updateLegend = (layerId) => {
+                const container = document.getElementById('legendContainer');
+                const title = container.querySelector('.legend-title');
+                const source = container.querySelector('.legend-source');
+                const gradient = container.querySelector('.legend-gradient');
+                const labels = container.querySelector('.legend-labels');
+
+                if (!layerId) {
+                    container.style.display = 'none';
+                    return;
+                }
+                container.style.display = 'block';
+
+                // Helpers for Date
+                const today = new Date();
+                const formatDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                if (layerId === 'VEGETATION') {
+                    title.textContent = 'VEGETATION HEALTH';
+                    source.textContent = `NASA MODIS • NDVI (8-Day)`;
+                    gradient.style.background = 'linear-gradient(to right, #e5f5e0, #a1d99b, #31a354, #006d2c)';
+                    labels.innerHTML = '<span>Stressed</span><span>Healthy</span>';
+
+                } else if (layerId === 'FLOOD') {
+                    title.textContent = 'FLOOD DETECTION';
+                    today.setDate(today.getDate() - 2);
+                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
+                    // Accurate Split: Water (Blue) vs Flood (Red)
+                    gradient.style.background = 'linear-gradient(to right, #00BFFF 40%, #ff0000 60%)';
+                    labels.innerHTML = '<span>Normal Water</span><span>Flood Detected</span>';
+
+                } else if (layerId === 'HEAT') {
+                    title.textContent = 'LAND SURFACE TEMP';
+                    today.setDate(today.getDate() - 1);
+                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
+                    gradient.style.background = 'linear-gradient(to right, #ffffb2, #fecc5c, #fd8d3c, #f03b20, #bd0026)';
+                    labels.innerHTML = '<span>20°C</span><span>50°C+</span>';
+
+                } else if (layerId === 'AIR') {
+                    title.textContent = 'AIR QUALITY (Aerosol)';
+                    today.setDate(today.getDate() - 1);
+                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
+                    // AOD: Yellow -> Orange -> Brown (Haze/Dust)
+                    gradient.style.background = 'linear-gradient(to right, #ffffb2, #fecc5c, #fd8d3c, #bd0026)';
+                    labels.innerHTML = '<span>Clear</span><span>Hazy</span>';
+
+                } else if (layerId === 'WATER') {
+                    title.textContent = 'WATER VAPOR';
+                    today.setDate(today.getDate() - 1);
+                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
+                    // Water Vapor: Light Blue -> Deep Blue
+                    gradient.style.background = 'linear-gradient(to right, #f7fbff, #9ecae1, #4292c6, #084594)';
+                    labels.innerHTML = '<span>Dry</span><span>Humid</span>';
+                }
+            };
+        }
+    </script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp7r2D1nmfSnKysVgJjLOpeEQ7KAQkp2E&libraries=places&loading=async&callback=initMap"
+        async defer></script>
+</body>
+
+</html>

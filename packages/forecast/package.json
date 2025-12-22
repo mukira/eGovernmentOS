@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev": "npx live-server src/ --entry-file=dev.html"
+  },
+  "dependencies": {
+    "@google/earthengine": "^1.7.4"
+  }
+}

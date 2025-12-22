@@ -1,0 +1,947 @@
+/* Google Maps Inspired UX - Premium Polish */
+:root {
+    --primary-color: #1a73e8;
+    --surface-color: #ffffff;
+    --text-primary: #202124;
+    --text-secondary: #5f6368;
+    --divider-color: #dadce0;
+    --shadow-floating: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    --font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    --radius-floating: 8px;
+    /* Classic Maps Pill/Card radius */
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #f1f3f4;
+    /* Loading state color */
+}
+
+/* Map Layer behind everything */
+#map-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* UI Layer */
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* 1. Top Left Search Pill */
+.search-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 392px;
+    /* Standard Maps Width */
+    pointer-events: auto;
+}
+
+.search-box {
+    background: white;
+    border-radius: 8px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 -1px 0px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s;
+}
+
+.search-box:hover,
+.search-box:focus-within {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.6;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#location-search {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.search-separator {
+    width: 1px;
+    height: 24px;
+    background: #dadce0;
+    margin: 0 12px;
+}
+
+/* Filter Chips */
+.filter-chips-container {
+    position: absolute;
+    top: 18px;
+    /* Vertically center with search box (approx) */
+    left: 412px;
+    /* 392px width + 20px gap */
+    right: 20px;
+    /* End before screen edge */
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    /* For header shadow space */
+    scrollbar-width: none;
+    /* Firefox */
+    pointer-events: auto;
+    /* Enable clicking */
+    z-index: 100;
+}
+
+.filter-chips-container::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.chip-btn {
+    background: white;
+    height: 32px;
+    /* Standard Maps Chip Height */
+    border: none;
+    border-radius: 16px;
+    padding: 0px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #3c4043;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+    /* Prevent squishing */
+}
+
+.chip-btn:hover {
+    background-color: #f1f3f4;
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
+}
+
+.chip-btn.active {
+    background-color: #e8f0fe;
+    /* Google Light Blue */
+    color: #1967d2;
+    /* Google Blue */
+    border: 1px solid #e8f0fe;
+    /* Prevent layout shift if border logic changes */
+}
+
+.chip-btn.active .material-symbols-outlined {
+    color: #1967d2;
+}
+
+/* Map Legend */
+.map-legend {
+    position: absolute;
+    bottom: 30px;
+    right: 70px;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: 'Roboto', sans-serif;
+    transition: opacity 0.3s ease;
+}
+
+.map-legend.hidden {
+    display: none !important;
+}
+
+.legend-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+}
+
+#legend-title {
+    font-weight: 700;
+    color: #202124;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#legend-source {
+    color: #5f6368;
+    display: flex;
+    /* Flex for loader alignment */
+    align-items: center;
+    gap: 6px;
+}
+
+/* Tiny Loader for Legend */
+.legend-loader {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #ddd;
+    border-bottom-color: #1a73e8;
+    border-radius: 50%;
+    display: inline-block;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.legend-bar {
+    height: 10px;
+    width: 100%;
+    border-radius: 5px;
+    background: #eee;
+    /* Default Gradient */
+    background: linear-gradient(to right, #ffffff, #00ff00);
+}
+
+.legend-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #5f6368;
+    margin-top: -4px;
+}
+
+.chip-btn .material-symbols-outlined {
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+.search-btn {
+    border: none;
+    background: white;
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-btn:hover {
+    background: #f1f3f4;
+}
+
+/* Date Picker Button (Blue) */
+.date-picker-btn {
+    background-color: #1a73e8 !important;
+    /* Force Blue */
+    color: white !important;
+    border-radius: 20px;
+    padding: 8px 16px;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+.date-picker-btn:hover {
+    background-color: #1557b0 !important;
+    box-shadow: 0 2px 4px rgba(60, 64, 67, 0.3);
+}
+
+.date-picker-btn .material-symbols-outlined {
+    color: white;
+    /* Ensure icon is white */
+}
+
+/* 2. Side Panel (Slide in) */
+.side-panel {
+    position: absolute;
+    top: 220px;
+    /* pushed down to clear 'This Area' card */
+    left: 10px;
+    width: 392px;
+    max-height: calc(100vh - 230px);
+    background: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow-floating);
+    pointer-events: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    /* Animation */
+    opacity: 0;
+    transform: translateX(-20px);
+    visibility: hidden;
+    transition: opacity 0.3s cubic-bezier(0.4, 0.0, 0.2, 1),
+        transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.side-panel.active {
+    opacity: 1;
+    transform: translateX(0);
+    visibility: visible;
+}
+
+.panel-header {
+    padding: 16px 24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #70757a;
+    cursor: pointer;
+}
+
+#insight-content {
+    overflow-y: auto;
+}
+
+/* Insight Cards Design */
+.card {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--divider-color);
+}
+
+.card:last-child {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 2px 0;
+    margin-bottom: 4px;
+}
+
+.status-danger {
+    color: #d93025;
+}
+
+.status-warning {
+    color: #d93025;
+    /* Use Red for high impact warning in Kenya context */
+}
+
+.status-success {
+    color: #188038;
+}
+
+.card-value {
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.card-desc {
+    font-size: 14px;
+    line-height: 20px;
+    color: #3c4043;
+}
+
+.action-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 18px;
+    font-weight: 500;
+    font-size: 14px;
+    margin-top: 12px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+}
+
+.action-btn:hover {
+    background: #1765cc;
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
+}
+
+/* 3. Timeline (Bottom Center) */
+.timeline-floating {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    background: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-floating);
+    pointer-events: auto;
+}
+
+input[type=range] {
+    width: 100%;
+}
+
+/* 4. Skeleton Loading State (Shimmer) */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.skeleton {
+    background: #f0f0f0;
+    background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.skeleton-text {
+    height: 16px;
+    width: 80%;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 60%;
+    margin-bottom: 12px;
+}
+
+.skeleton-rect {
+    height: 100px;
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* 5. Trend Bars (Visual Data) */
+.trend-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #e8eaed;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+.trend-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+
+.trend-fill-success {
+    background: #188038;
+}
+
+.trend-fill-warning {
+    background: #fbbb04;
+}
+
+.trend-fill-danger {
+    background: #d93025;
+}
+
+/* 6. Print Styles (Policy Brief Mode) */
+@media print {
+
+    /* Hide UI Elements */
+    .search-container,
+    .timeline-floating,
+    .close-btn,
+    .action-btn,
+    #map-background,
+    #map-frame {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        height: auto;
+        overflow: visible;
+    }
+
+    #ui-layer {
+        position: relative;
+        height: auto;
+    }
+
+    .side-panel {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-height: none;
+        box-shadow: none;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* Add Official Header */
+    .panel-header::before {
+        content: "OFFICIAL SENSITIVE - FORECAST BRIEF";
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        color: #d93025;
+        border-bottom: 2px solid #d93025;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+    }
+
+    .panel-header h2 {
+        font-size: 24px;
+        color: black;
+    }
+
+}
+
+
+/* 7. Autocomplete Dropdown Customization (Google Maps Style) */
+.pac-container {
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+    border-radius: 0 0 8px 8px;
+    /* Round bottom corners */
+    border-top: none;
+    /* Seamless with search box */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-top: 2px;
+    border: none;
+}
+
+.pac-item {
+    padding: 12px 16px;
+    /* Taller rows */
+    cursor: pointer;
+    line-height: 24px;
+    font-size: 15px;
+    border-top: none;
+    /* Remove default dividers */
+    color: #202124;
+    /* Primary Text */
+}
+
+.pac-item:hover {
+    background-color: #f1f3f4;
+    /* Subtle hover gray */
+}
+
+/* Icons */
+.pac-icon {
+    margin-right: 12px;
+    margin-top: 2px;
+    /* Hide default sprite and use a better one or filter it? 
+       Standard Maps API uses sprites. We can verify if we can replace it easily.
+       For now, let's just ensure spacing is correct. 
+    */
+}
+
+/* Query Text (The part user typed / matched) */
+.pac-item-query {
+    font-size: 15px;
+    color: #202124;
+    padding-right: 4px;
+}
+
+/* Secondary Text (Region/Country) */
+.pac-item span {
+    font-size: 13px;
+    color: #70757a;
+    /* Lighter secondary text */
+}
+
+/* Hide the "Powered by Google" if it interferes with visual cleaniness? 
+   No, it's required by TOS. We style it to be subtle. */
+
+/* 7. Autocomplete Dropdown Customization (Google Maps Style - Aggressive Override) */
+.pac-container {
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif !important;
+    border-radius: 0 0 16px 16px !important;
+    /* Rounded bottom */
+    border-top: 1px solid #e8eaed !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    margin-top: 0 !important;
+    border: none !important;
+    width: 392px !important;
+    /* Match search box width exactly */
+    left: 10px !important;
+    /* Force align left */
+    z-index: 1000 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+/* Remove default dividers and style items */
+.pac-item {
+    padding: 0 16px !important;
+    height: 48px !important;
+    /* Taller touch target */
+    line-height: 48px !important;
+    font-size: 16px !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    color: #202124 !important;
+    /* Primary Text */
+    display: flex !important;
+    align-items: center !important;
+}
+
+.pac-item:hover {
+    background-color: #f1f3f4 !important;
+}
+
+.pac-item-selected {
+    background-color: #f1f3f4 !important;
+}
+
+/* Custom Icon Logic */
+.pac-icon {
+    width: 24px !important;
+    height: 24px !important;
+    margin-right: 16px !important;
+    margin-top: 0 !important;
+    background-image: none !important;
+    /* Hide default sprite */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Inject Material Icon via Pseudo-element */
+.pac-icon::after {
+    content: 'location_on';
+    /* Default to Pin */
+    font-family: 'Material Symbols Outlined';
+    font-size: 20px;
+    color: #70757a;
+    /* Icon Gray */
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+}
+
+/* Query Text (The part user matched) */
+.pac-item-query {
+    font-size: 16px !important;
+    color: #202124 !important;
+    padding-right: 4px !important;
+    font-weight: 500 !important;
+    /* Making match text slightly bolder */
+}
+
+/* Secondary Text (Region/Country) */
+.pac-item span {
+    font-size: 14px !important;
+    color: #70757a !important;
+}
+
+/* Hide the logo for cleaner UI if possible, or style it minimal */
+
+/* 7. Autocomplete Dropdown Customization (Google Maps Style - High Contrast Darker) */
+.pac-container {
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif !important;
+    border-radius: 0 0 16px 16px !important;
+    /* Rounded bottom */
+    border-top: 1px solid #e8eaed !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    margin-top: 0 !important;
+    border: none !important;
+    width: 392px !important;
+    left: 10px !important;
+    z-index: 1000 !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.pac-item {
+    padding: 0 16px !important;
+    height: 48px !important;
+    line-height: 48px !important;
+    font-size: 16px !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    color: #000000 !important;
+    /* Pure Black */
+    display: flex !important;
+    align-items: center !important;
+}
+
+.pac-item:hover {
+    background-color: #f1f3f4 !important;
+}
+
+.pac-item-selected {
+    background-color: #f1f3f4 !important;
+}
+
+.pac-icon {
+    width: 24px !important;
+    height: 24px !important;
+    margin-right: 16px !important;
+    margin-top: 0 !important;
+    background-image: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.pac-icon::after {
+    content: 'location_on';
+    font-family: 'Material Symbols Outlined';
+    font-size: 24px;
+    /* Larger icon */
+    color: #444444 !important;
+    /* Darker Icon Gray */
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+}
+
+/* The matched query text */
+.pac-item-query {
+    font-size: 16px !important;
+    color: #000000 !important;
+    /* Pure Black */
+    padding-right: 4px !important;
+    font-weight: 500 !important;
+}
+
+/* Secondary Text (Region) */
+.pac-item span {
+    font-size: 14px !important;
+    color: #3c4043 !important;
+    /* Darker secondary text */
+}
+
+
+/* 8. Advanced History List Styling (Work/Home/History) */
+.pac-item.rich-item {
+    height: auto !important;
+    min-height: 60px !important;
+    padding: 8px 24px !important;
+    align-items: flex-start !important;
+}
+
+.pac-icon-wrapper {
+    min-width: 36px;
+    height: 36px;
+    background-color: #f1f3f4;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    margin-top: 4px;
+}
+
+.pac-icon-wrapper.blue-bg {
+    background-color: #e8f0fe;
+    color: #1a73e8;
+}
+
+.pac-icon-inside {
+    font-family: 'Material Symbols Outlined';
+    font-size: 20px;
+    color: inherit;
+    /* Inherit form wrapper */
+}
+
+.pac-item-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+.pac-item-title {
+    font-size: 16px;
+    color: #202124;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.pac-item-subtitle {
+    font-size: 14px;
+    color: #70757a;
+    line-height: 20px;
+}
+
+.pac-item-action {
+    font-size: 14px;
+    color: #1a73e8;
+    font-weight: 500;
+    margin-left: 12px;
+    white-space: nowrap;
+    align-self: center;
+}
+
+.pac-footer {
+    padding: 16px;
+    text-align: center;
+    border-top: 1px solid #e8eaed;
+}
+
+
+/* 9. 'This Area' Zero-State Card */
+
+/* 9. 'This Area' Zero-State Card */
+.area-card {
+    background: white;
+    border-radius: 24px;
+    /* Exact Google Match */
+    padding: 16px 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    /* Clean, soft elevation */
+    margin-top: 8px;
+    cursor: pointer;
+    font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+}
+
+.area-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.area-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #202124;
+}
+
+.area-weather {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    /* Larger temp */
+    color: #202124;
+}
+
+.area-content {
+    display: flex;
+    align-items: center;
+    /* Center vertically */
+}
+
+.area-icon-circle {
+    width: 40px;
+    /* Larger icon circle */
+    height: 40px;
+    border-radius: 50%;
+    background-color: #d93025;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+}
+
+.area-icon-circle.safe {
+    background-color: #188038;
+}
+
+.area-info {
+    flex: 1;
+}
+
+.area-headline {
+    font-size: 16px;
+    /* Match headline size */
+    font-weight: 400;
+    color: #202124;
+    line-height: 20px;
+}
+
+.area-subtext {
+    font-size: 14px;
+    color: #70757a;
+    line-height: 20px;
+    margin-top: 2px;
+}
+
+.area-chevron {
+    color: #70757a;
+    font-size: 24px;
+    margin-left: 12px;
+}
+
+/* Zero-State Override */
+.pac-container.zero-state {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}

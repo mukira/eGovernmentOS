@@ -1,0 +1,40 @@
+{
+    "manifest_version": 3,
+    "name": "Forecast: Kenya EO Decisions",
+    "version": "1.0",
+    "description": "Simplified Earth Observation insights for Kenyan decision makers.",
+    "permissions": [
+        "storage",
+        "activeTab"
+    ],
+    "action": {
+        "default_icon": {
+            "16": "assets/icon16.png",
+            "48": "assets/icon48.png",
+            "128": "assets/icon128.png"
+        }
+    },
+    "background": {
+        "service_worker": "src/background.js"
+    },
+    "icons": {
+        "16": "assets/icon16.png",
+        "48": "assets/icon48.png",
+        "128": "assets/icon128.png"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://generativelanguage.googleapis.com https://firestore.googleapis.com https://earthengine.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
+    },
+    "sandbox": {
+        "pages": [
+            "src/sandbox.html"
+        ]
+    },
+    "oauth2": {
+        "client_id": "YOUR_CLIENT_ID_HERE.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/earthengine.readonly",
+            "https://www.googleapis.com/auth/userinfo.email"
+        ]
+    }
+}
