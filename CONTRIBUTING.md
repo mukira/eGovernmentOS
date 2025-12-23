@@ -140,6 +140,40 @@ The build typically takes 1-3 hours on modern hardware (M4 Max, Ryzen 9, etc.).
 
 **For detailed instructions, see [Browser Build Guide](docs/BUILD.md).**
 
+### Advanced Build Scenarios
+
+For faster iteration, use specific module commands:
+
+#### 1. Quick Recompile (Code Changes Only)
+**Use when:** You modified C++ code (e.g., `chrome/`) and just need to rebuild.
+```bash
+python3 -m build.browseros build \
+  --arch x64 \
+  --build-type debug \
+  --chromium-src /path/to/chromium/src \
+  --modules compile
+```
+
+#### 2. Patch Development
+**Use when:** You updated patches in `chromium_patches/`.
+```bash
+python3 -m build.browseros build \
+  --arch x64 \
+  --build-type debug \
+  --chromium-src /path/to/chromium/src \
+  --modules patches,configure,compile
+```
+
+#### 3. Branding & String Updates
+**Use when:** You updated `branding_config.json`, UI strings, or icons.
+```bash
+python3 -m build.browseros build \
+  --arch x64 \
+  --build-type debug \
+  --chromium-src /path/to/chromium/src \
+  --modules resources,chromium_replace,string_replaces,configure,compile
+```
+
 ## Making Your First Contribution
 
 Open a PR on GitHub with:

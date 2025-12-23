@@ -34,8 +34,17 @@
     </script>
 
     <!-- Google Maps API for Autocomplete (Dev Only) -->
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp7r2D1nmfSnKysVgJjLOpeEQ7KAQkp2E&libraries=places&loading=async&callback=initMap"></script>
+    <!-- Load Config -->
+    <script src="config.js"></script>
+
+    <!-- Dynamically Load Google Maps API -->
+    <script>
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places&loading=async&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    </script>
 
     <!-- Google Maps Extended Component Library (Local) -->
     <script type="module" src="libs/google_maps_extended.js"></script>
@@ -74,7 +83,7 @@
             <button class="chip-btn"><span class="material-symbols-outlined">air</span>Air Quality Level</button>
             <button class="chip-btn"><span class="material-symbols-outlined">thermostat</span>Urban Heat
                 Level</button>
-            <button class="chip-btn"><span class="material-symbols-outlined">water_drop</span>Water
+            <button class="chip-btn" id="btn-water"><span class="material-symbols-outlined">water_drop</span>Water
                 Availability</button>
         </div>
 

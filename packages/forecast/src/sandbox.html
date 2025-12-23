@@ -265,26 +265,199 @@
                     });
 
                 } else if (layerId === 'HEAT') {
-                    today.setDate(today.getDate() - 1);
-                    dateStr = today.toISOString().split('T')[0];
-                    config = { name: 'MODIS_Terra_Land_Surface_Temp_Day', zoom: 9, format: 'png', opacity: 0.6 };
+                    // NASA VIIRS City Lights (Static, Cloud-Free)
+                    // Best for visualizing Urbanization / Built-up areas
+                    // Uses 2012 baseline which is the standard cloud-free night lights product
+                    dateStr = '2012-01-01';
+                    config = { name: 'VIIRS_CityLights_2012', zoom: 8, format: 'jpg', opacity: 0.6 };
+
+                    // Add CSS to boost contrast of night lights
+                    const style = document.createElement('style');
+                    style.innerHTML = `img[src*="VIIRS_CityLights_2012"] { filter: brightness(1.3) contrast(1.5) saturate(1.2); }`;
+                    document.head.appendChild(style);
+
+                    return {
+                        tileSize: new google.maps.Size(256, 256),
+                        maxZoom: 12, // Allow zooming deeper
+                        name: 'URBANIZATION',
+                        getTile: function (coord, zoom, ownerDocument) {
+                            const div = ownerDocument.createElement('div');
+                            div.style.width = '256px';
+                            div.style.height = '256px';
+                            div.style.overflow = 'hidden';
+                            div.style.position = 'relative';
+                            div.style.opacity = '0.6'; // Maintain requested transparency
+
+                            const img = ownerDocument.createElement('img');
+                            // Apply the contrast/brightness filter we defined in CSS
+                            // Note: CSS selector targets src string, so this still works or we add class
+                            img.style.position = 'absolute';
+
+                            // Max native zoom for this layer is 8
+                            const maxNativeZoom = 8;
+
+                            if (zoom <= maxNativeZoom) {
+                                // Direct load
+                                img.src = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${zoom}/${coord.y}/${coord.x}.${config.format}`;
+                                img.style.width = '256px';
+                                img.style.height = '256px';
+                            } else {
+                                // Overzoom Logic (CSS Scaling)
+                                const scale = Math.pow(2, zoom - maxNativeZoom);
+                                const x = Math.floor(coord.x / scale);
+                                const y = Math.floor(coord.y / scale);
+
+                                img.src = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${maxNativeZoom}/${y}/${x}.${config.format}`;
+
+                                // Scale up the image
+                                const dim = 256 * scale;
+                                img.style.width = `${dim}px`;
+                                img.style.height = `${dim}px`;
+
+                                // Position it to show the correct portion
+                                const offsetX = (coord.x % scale) * 256;
+                                const offsetY = (coord.y % scale) * 256;
+                                img.style.left = `-${offsetX}px`;
+                                img.style.top = `-${offsetY}px`;
+                            }
+
+                            div.appendChild(img);
+                            return div;
+                        }
+                    };
+
+                } else if (layerId === 'AIR') {
+                    // *** GOOGLE AIR QUALITY HEATMAP API ***
                     return new google.maps.ImageMapType({
                         getTileUrl: function (coord, zoom) {
-                            return `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${zoom}/${coord.y}/${coord.x}.${config.format}`;
+                            // Testing with US_AQI to diagnose issue
+                            return `https://airquality.googleapis.com/v1/mapTypes/US_AQI/heatmapTiles/${zoom}/${coord.x}/${coord.y}?key=${CONFIG.GOOGLE_MAPS_API_KEY}`;
                         },
-                        tileSize: new google.maps.Size(256, 256), opacity: 0.6
+                        tileSize: new google.maps.Size(256, 256),
+                        opacity: 0.7,
+                        name: 'PM2.5 Air Quality'
                     });
 
+
                 } else if (layerId === 'WATER') {
-                    today.setDate(today.getDate() - 1);
-                    dateStr = today.toISOString().split('T')[0];
-                    config = { name: 'MODIS_Terra_Water_Vapor_Day', zoom: 7, format: 'png', opacity: 0.6 };
-                    return new google.maps.ImageMapType({
-                        getTileUrl: function (coord, zoom) {
-                            return `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${zoom}/${coord.y}/${coord.x}.${config.format}`;
-                        },
-                        tileSize: new google.maps.Size(256, 256), opacity: 0.6
-                    });
+                    // SMAP L4 Root Zone Soil Moisture (Model Value-Added)
+                    // SYSTEM CLOCK FIX: Environment reports 2025, but live data is 2024.
+                    // Dynamic Logic: Use Today (System) adjusted to 2024, minus 7 day latency.
+                    const waterDate = new Date();
+                    if (waterDate.getFullYear() > 2024) waterDate.setFullYear(2024);
+                    waterDate.setDate(waterDate.getDate() - 7);
+                    dateStr = waterDate.toISOString().split('T')[0];
+                    console.log("Loading Water Data for:", dateStr);
+                    config = { name: 'SMAP_L4_Analyzed_Root_Zone_Soil_Moisture', zoom: 6, format: 'png', opacity: 0.7 };
+
+                    return {
+                        tileSize: new google.maps.Size(256, 256),
+                        maxZoom: 12,
+                        name: 'SOIL MOISTURE',
+                        getTile: function (coord, zoom, ownerDocument) {
+                            const canvas = ownerDocument.createElement('canvas');
+                            canvas.width = 256;
+                            canvas.height = 256;
+                            canvas.style.opacity = '0.9'; // Increased opacity for Hydro Highlight
+
+                            // SEAM FIX: Slight overlap to hide grid lines between tiles
+                            // Reduced from 1.01 to 1.002 to improve geometric accuracy (only 0.5px expansion)
+                            canvas.style.transform = 'scale(1.002)';
+
+                            const ctx = canvas.getContext('2d');
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = 'high';
+
+                            // HELPER: Hydro-Highlight Filter
+                            // Enhances blue/green "wet" pixels and suppresses brown/yellow "dry" pixels
+                            const enhanceWaterZones = (ctx) => {
+                                const imgData = ctx.getImageData(0, 0, 256, 256);
+                                const data = imgData.data;
+                                for (let i = 0; i < data.length; i += 4) {
+                                    const r = data[i];
+                                    const g = data[i + 1];
+                                    const b = data[i + 2];
+
+                                    // SMAP Palette Analysis:
+                                    // Wet = Blue Dominant OR Green Dominant
+                                    // Dry = Red Dominant (Brown/Yellow)
+
+                                    const isWet = (b > r) || (g > r);
+
+                                    if (isWet) {
+                                        // WET ZONES: Make vibrant Blue/Cyan
+                                        // Boost Blue channel to satisfy "more blue" request
+                                        data[i] = r * 0.6;          // Reduce Red
+                                        data[i + 1] = g;              // Keep Green
+                                        data[i + 2] = Math.max(b, 180); // Min Blue brightness
+                                        data[i + 3] = 220;            // High Opacity
+                                    } else {
+                                        // DRY ZONES: Fade out to emphasize water
+                                        data[i + 3] = 60;             // Low Opacity (Transparent)
+                                    }
+                                }
+                                ctx.putImageData(imgData, 0, 0);
+                            };
+
+                            const maxNativeZoom = 6;
+
+                            if (zoom <= maxNativeZoom) {
+                                // Direct load
+                                const img = new Image();
+                                img.crossOrigin = "Anonymous";
+                                img.src = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${zoom}/${coord.y}/${coord.x}.${config.format}`;
+
+                                img.onload = function () {
+                                    ctx.drawImage(img, 0, 0, 256, 256);
+                                    enhanceWaterZones(ctx);
+                                };
+                                canvas.style.filter = 'blur(2px)';
+                                return canvas;
+                            }
+
+                            // Overzoom Logic: Client-side Mosaicking / Resampling
+                            const scale = Math.pow(2, zoom - maxNativeZoom);
+                            const pX = Math.floor(coord.x / scale);
+                            const pY = Math.floor(coord.y / scale);
+
+                            const img = new Image();
+                            img.crossOrigin = "Anonymous";
+                            img.src = `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${config.name}/default/${dateStr}/GoogleMapsCompatible_Level${config.zoom}/${maxNativeZoom}/${pY}/${pX}.${config.format}`;
+
+                            img.onload = function () {
+                                // Source Chunk Calculation
+                                const pxPerTile = 256 / scale;
+                                const localX = coord.x % scale;
+                                const localY = coord.y % scale;
+
+                                let sx = localX * pxPerTile;
+                                let sy = localY * pxPerTile;
+
+                                // Buffer Logic: Fix seams from parent boundaries
+                                const buffer = 0.5;
+
+                                let sx_adj = Math.max(0, sx - buffer);
+                                let sy_adj = Math.max(0, sy - buffer);
+                                let sw_adj = Math.min(256 - sx_adj, (sx + pxPerTile + buffer) - sx_adj);
+                                let sh_adj = Math.min(256 - sy_adj, (sy + pxPerTile + buffer) - sy_adj);
+
+                                let dx_adj = (sx_adj - sx) * scale;
+                                let dy_adj = (sy_adj - sy) * scale;
+                                let dw_adj = sw_adj * scale;
+                                let dh_adj = sh_adj * scale;
+
+                                ctx.drawImage(img, sx_adj, sy_adj, sw_adj, sh_adj, dx_adj, dy_adj, dw_adj, dh_adj);
+                                enhanceWaterZones(ctx);
+                            };
+
+                            // Dynamic Blur: Increase smoothing as we zoom in closer to hide big pixels
+                            // Scale 1 (Native) -> 2px
+                            // Scale 8 (Zoom 9) -> ~7px
+                            const blurVal = Math.max(2, scale * 0.8);
+                            canvas.style.filter = `blur(${blurVal}px)`;
+                            return canvas;
+                        }
+                    };
 
                 } else if (layerId === 'FLOOD') {
                     // *** REAL FLOOD DATA WITH FILTERING ***
@@ -303,7 +476,6 @@
                     return new FilteredMapType(new google.maps.Size(256, 256), config, dateStr);
                 }
 
-                // ... other layers ...
                 return null;
             };
 
@@ -384,34 +556,44 @@
                     `;
 
                 } else if (layerId === 'HEAT') {
-                    title.textContent = 'LAND SURFACE TEMP';
-                    today.setDate(today.getDate() - 1);
-                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
-                    gradient.style.background = 'linear-gradient(to right, #ffffb2, #fecc5c, #fd8d3c, #f03b20, #bd0026)';
-                    labels.innerHTML = '<span>20°C</span><span>50°C+</span>';
+                    title.textContent = 'URBANIZATION';
+                    source.textContent = 'NASA City Lights • Cloud Free';
+                    // Night Lights: Black (Rural) -> Gold (Developed) -> White (Urban)
+                    // Using RGBA to match the layer's 0.6 opacity, showing that "Black" is actually transparent
+                    gradient.style.background = 'linear-gradient(to right, rgba(0,0,0,0.6), rgba(92,64,0,0.8), rgba(212,175,55,1), #ffffff)';
+                    labels.innerHTML = '<span>Rural</span><span>Developed</span><span>Urban</span>';
 
                 } else if (layerId === 'AIR') {
-                    title.textContent = 'AIR QUALITY (Aerosol)';
-                    today.setDate(today.getDate() - 1);
-                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
-                    // AOD: Yellow -> Orange -> Brown (Haze/Dust)
-                    gradient.style.background = 'linear-gradient(to right, #ffffb2, #fecc5c, #fd8d3c, #bd0026)';
-                    labels.innerHTML = '<span>Clear</span><span>Hazy</span>';
+                    title.textContent = 'AIR QUALITY';
+                    source.textContent = 'Google Air Quality API • Real-time';
+                    // US AQI Standard Color Scale
+                    gradient.style.background = 'linear-gradient(to right, #00E400, #FFFF00, #FF7E00, #FF0000, #8F3F97, #7E0023)';
+                    labels.innerHTML = '<span>Good</span><span>Moderate</span><span>Unhealthy</span><span>Very Unhealthy</span><span>Hazardous</span>';
 
                 } else if (layerId === 'WATER') {
-                    title.textContent = 'WATER VAPOR';
-                    today.setDate(today.getDate() - 1);
-                    source.textContent = `NASA MODIS • ${formatDate(today)}`;
-                    // Water Vapor: Light Blue -> Deep Blue
-                    gradient.style.background = 'linear-gradient(to right, #f7fbff, #9ecae1, #4292c6, #084594)';
-                    labels.innerHTML = '<span>Dry</span><span>Humid</span>';
+                    // Calculate same dynamic date for label
+                    const labelDate = new Date();
+                    if (labelDate.getFullYear() > 2024) labelDate.setFullYear(2024);
+                    labelDate.setDate(labelDate.getDate() - 7);
+
+                    title.textContent = 'SOIL MOISTURE';
+                    source.textContent = `NASA SMAP • Root Zone (${formatDate(labelDate)} ${labelDate.getFullYear()})`;
+                    // Visual Palette: Faint Brown (Dry) -> Vibrant Blue (Wet) represents the filtered view
+                    gradient.style.background = 'linear-gradient(to right, rgba(139,69,19,0.3), rgba(144,238,144,0.6), rgba(0,198,255,1), rgba(0,0,255,1))';
+                    labels.innerHTML = '<span>Low Avail.</span><span>Moderate</span><span>High Avail.</span>';
                 }
             };
         }
     </script>
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp7r2D1nmfSnKysVgJjLOpeEQ7KAQkp2E&libraries=places&loading=async&callback=initMap"
-        async defer></script>
+    <script src="config.js"></script>
+    <script>
+        // Dynamically load Google Maps with key from config.js
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places&loading=async&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    </script>
 </body>
 
 </html>

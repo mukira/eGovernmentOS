@@ -78,7 +78,7 @@ class MacOSPackageModule(CommandModule):
 def create_dmg(
     app_path: Path,
     dmg_path: Path,
-    volume_name: str = "BrowserOS",
+    volume_name: str = "eGovernmentOS",
     pkg_dmg_path: Optional[Path] = None,
 ) -> bool:
     """Create a DMG package from an app bundle"""

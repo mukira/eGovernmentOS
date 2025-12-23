@@ -165,6 +165,18 @@ body {
     color: #1967d2;
 }
 
+/* Feature: Hydro Blue Theme for Water Layer */
+#btn-water.active {
+    background: linear-gradient(135deg, #00C6FF, #0072FF);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+}
+
+#btn-water.active .material-symbols-outlined {
+    color: white;
+}
+
 /* Map Legend */
 .map-legend {
     position: absolute;

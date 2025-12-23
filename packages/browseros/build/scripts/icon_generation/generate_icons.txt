@@ -1,4 +1,4 @@
-# BrowserOS Icon Generation Configuration
+# eGovernmentOS Icon Generation Configuration
 # =========================================
 #
 # Format:

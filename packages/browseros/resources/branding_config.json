@@ -1,0 +1,24 @@
+{
+    "replacements": [
+        {
+            "pattern": "BrowserOS",
+            "replacement": "eGovernmentOS"
+        },
+        {
+            "pattern": "Browser OS",
+            "replacement": "eGovernmentOS"
+        },
+        {
+            "pattern": "Chromium",
+            "replacement": "eGovernmentOS"
+        },
+        {
+            "pattern": "Chrome",
+            "replacement": "eGovernmentOS"
+        },
+        {
+            "pattern": "Google Chrome",
+            "replacement": "eGovernmentOS"
+        }
+    ]
+}

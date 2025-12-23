@@ -1,7 +1,7 @@
-# BrowserOS Icon Generation
+# eGovernmentOS Icon Generation
 
-This directory contains the unified icon generation system for BrowserOS. All browser icons
-for Windows, macOS, Linux, and ChromeOS are generated from a single source image.
+This directory contains the unified icon generation system for eGovernmentOS. All browser icons
+for Windows, macOS, Linux, and eGovernmentOSOS are generated from a single source image.
 
 ## Quick Start
 
@@ -69,7 +69,7 @@ COPY   source dest          # Copy static file as-is
 
 ### Common Icons (Generated)
 
-| Output | Size | Description | Chromium Target |
+| Output | Size | Description | eGovernmentOS Target |
 |--------|------|-------------|-----------------|
 | `product_logo_16.png` | 16x16 | Small icon | `chrome/app/theme/chromium/` |
 | `product_logo_22.png` | 22x22 | Toolbar icon | `chrome/app/theme/chromium/` |
@@ -89,7 +89,7 @@ COPY   source dest          # Copy static file as-is
 
 ### Windows Icons (Generated)
 
-| Output | Sizes | Description | Chromium Target |
+| Output | Sizes | Description | eGovernmentOS Target |
 |--------|-------|-------------|-----------------|
 | `win/chromium.ico` | 16,20,24,32,40,48,64,128,256 | Main app icon | `chrome/app/theme/chromium/win/` |
 | `win/incognito.ico` | 16,20,24,32,40,48,64,128,256 | Incognito mode | `chrome/app/theme/chromium/win/` |
@@ -112,7 +112,7 @@ COPY   source dest          # Copy static file as-is
 
 ### macOS Icons (Generated)
 
-| Output | Description | Chromium Target |
+| Output | Description | eGovernmentOS Target |
 |--------|-------------|-----------------|
 | `mac/app.icns` | Main app icon bundle | `chrome/app/theme/chromium/mac/` |
 | `mac/document.icns` | Document icon bundle | `chrome/app/theme/chromium/mac/` |
@@ -121,7 +121,7 @@ COPY   source dest          # Copy static file as-is
 
 ### Linux Icons (Generated)
 
-| Output | Size | Description | Chromium Target |
+| Output | Size | Description | eGovernmentOS Target |
 |--------|------|-------------|-----------------|
 | `linux/product_logo_24.png` | 24x24 | Menu icon | `chrome/app/theme/chromium/linux/` |
 | `linux/product_logo_48.png` | 48x48 | Medium icon | `chrome/app/theme/chromium/linux/` |
@@ -130,16 +130,16 @@ COPY   source dest          # Copy static file as-is
 | `linux/product_logo_256.png` | 256x256 | Extra large | `chrome/app/theme/chromium/linux/` |
 | `linux/product_logo_32.xpm` | 32x32 | X11 format | `chrome/app/theme/chromium/linux/` |
 
-### ChromeOS Icons (Generated)
+### eGovernmentOSOS Icons (Generated)
 
-| Output | Size | Description | Chromium Target |
+| Output | Size | Description | eGovernmentOS Target |
 |--------|------|-------------|-----------------|
 | `chromeos/chrome_app_icon_32.png` | 32x32 | Small app icon | `chrome/app/theme/chromium/chromeos/` |
 | `chromeos/chrome_app_icon_192.png` | 192x192 | Large app icon | `chrome/app/theme/chromium/chromeos/` |
 
 ## Static Files (Copied)
 
-| File | Description | Chromium Target |
+| File | Description | eGovernmentOS Target |
 |------|-------------|-----------------|
 | `product_logo.svg` | Vector logo | `chrome/app/theme/chromium/` |
 | `product_logo.ai` | Illustrator source | `chrome/app/theme/chromium/` |
@@ -149,7 +149,7 @@ COPY   source dest          # Copy static file as-is
 
 1. **Update source icon**: Replace `source/app_icon.png` with your new icon (≥1024x1024)
 2. **Run generation**: `python generate_icons.py`
-3. **Build BrowserOS**: The `copy_resources.yaml` copies generated icons to chromium source tree
+3. **Build eGovernmentOS**: The `copy_resources.yaml` copies generated icons to chromium source tree
 
 ## Troubleshooting
 
