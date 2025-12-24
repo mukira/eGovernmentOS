@@ -33,6 +33,20 @@ cleanup_data() {
     rm -rf "$HOME/Library/HTTPStorages/com.browseros.dev"*
     rm -rf "$HOME/Library/WebKit/com.browseros.dev"*
 
+    # 6. System Permission Resets (Notifications)
+    # This forces the "Allow Notifications?" prompt to appear again
+    # and clears the cached icon/name in Notification Center.
+    echo "   🔒 Resetting System Permissions headers..."
+    tccutil reset Notifications com.egovernmentos.dev.eGovernmentOS 2>/dev/null || true
+    tccutil reset Notifications com.egovernmentos.dev.eGovernmentOS.framework.AlertNotificationService 2>/dev/null || true
+    
+    # Also clear old names if they exist
+    tccutil reset Notifications com.browseros.dev 2>/dev/null || true
+    
+    # Force Notification Center to reload (Aggressive cache clear)
+    killall usernoted 2>/dev/null || true
+    killall NotificationCenter 2>/dev/null || true
+
     echo "   ✓ All data cleared (Factory Reset)"
 }
 
