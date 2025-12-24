@@ -1,7 +1,7 @@
 {
     "replacements": [
         {
-            "pattern": "BrowserOS",
+            "pattern": "eGovernmentOS",
             "replacement": "eGovernmentOS"
         },
         {

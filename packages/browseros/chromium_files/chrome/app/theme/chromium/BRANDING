@@ -1,0 +1,7 @@
+COMPANY_FULLNAME=eGovernmentOS Team
+COMPANY_SHORTNAME=eGovernmentOS
+PRODUCT_FULLNAME=eGovernmentOS Dev
+PRODUCT_SHORTNAME=eGovernmentOS
+COPYRIGHT=Copyright 2024 eGovernmentOS. All rights reserved.
+MAC_BUNDLE_ID=com.egovernmentos.dev
+MAC_CREATOR_CODE=eGov
