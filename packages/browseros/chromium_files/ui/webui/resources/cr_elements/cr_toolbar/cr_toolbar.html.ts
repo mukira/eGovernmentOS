@@ -10,7 +10,7 @@ export function getHtml(this: CrToolbarElement) {
   // clang-format off
   return html`
 <div id="leftContent">
-  <div id="leftSpacer">
+  <div id="leftSpacer" style="display: flex; align-items: center;">
     ${this.showMenu ? html`
       <cr-icon-button id="menuButton" class="no-overlap"
           iron-icon="cr20:menu" @click="${this.onMenuClick_}"
@@ -18,7 +18,7 @@ export function getHtml(this: CrToolbarElement) {
           title="${this.menuLabel}">
       </cr-icon-button>` : ''}
     <slot name="product-logo">
-      <svg id="product-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" xml:space="preserve" role="presentation" style="width: 32px; height: 32px; object-fit: contain;">
+      <svg id="product-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1024 1024" xml:space="preserve" role="presentation" style="width: 32px; height: 32px; object-fit: contain; margin-inline-end: 8px; display: block;">
         <style type="text/css">
           .st0{fill:none;}
           .st1{clip-path:url(#SVGID_3_);fill:none;stroke:#1D79FF;stroke-width:209;stroke-miterlimit:10;}
@@ -53,7 +53,7 @@ export function getHtml(this: CrToolbarElement) {
         </g>
       </svg>
     </slot>
-    <h1>${this.pageName}</h1>
+    <h1 style="margin: 0; line-height: 1;">${this.pageName}</h1>
   </div>
 </div>
 

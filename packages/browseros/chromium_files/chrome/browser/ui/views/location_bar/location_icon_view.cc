@@ -100,8 +100,8 @@ SkColor LocationIconView::GetForegroundColor() const {
     return GetColorProvider()->GetColor(kColorOmniboxSecurityChipText);
   }
 
-  // eGovernmentOS: Force White Text/Icon
-  return SK_ColorWHITE;
+  // eGovernmentOS: Revert to default theme color
+  return GetColorProvider()->GetColor(kColorOmniboxText);
 }
 
 bool LocationIconView::ShouldShowSeparator() const { return false; }
@@ -334,10 +334,8 @@ void LocationIconView::UpdateBackground() {
     ConfigureInkDropForRefresh2023(this, kColorOmniboxSecurityChipInkDropHover,
                                    kColorOmniboxSecurityChipInkDropRipple);
   } else {
-    // eGovernmentOS: Force Blue Background (#1A73E8)
-    SetBackgroundColor(SkColorSetRGB(0x1a, 0x73, 0xe8));
-    // Use simple white ink drop for the blue background
-    views::InkDrop::Get(this)->SetBaseColor(SK_ColorWHITE);
+    // Revert to default behavior (likely transparent/grey based on theme)
+    SetBackgroundColor(GetColorProvider()->GetColor(id));
   }
 }
 
