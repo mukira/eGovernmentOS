@@ -1,0 +1,16 @@
+// Copyright 2025 The BrowserOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+CANVAS_DIMENSIONS, 32,
+MOVE_TO, 14.14, 30.05,
+ARC_TO, 9.59, 9.59, 0, 0, 1, 28.59, 22.64,
+LINE_TO, 30.25, 16.16,
+ARC_TO, 16.12, 16.12, 0, 0, 0, 7.90, 27.62,
+CLOSE,
+NEW_PATH,
+MOVE_TO, 17.76, 1.85,
+ARC_TO, 9.59, 9.59, 0, 0, 1, 2.90, 10.55,
+LINE_TO, 1.90, 17.39,
+ARC_TO, 16.12, 16.12, 0, 0, 0, 24.21, 4.33,
+CLOSE

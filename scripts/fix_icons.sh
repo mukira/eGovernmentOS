@@ -56,7 +56,7 @@ echo "🔨 Running Incremental Build (Resources + Compile)..."
     cd packages
     python3 -m browseros.build build \
         --chromium-src "$CHROMIUM_SRC" \
-        --modules resources,compile
+        --modules chromium_replace,resources,compile
 )
 
 # 3. Manual Sync (The Fix)

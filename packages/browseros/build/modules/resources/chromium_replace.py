@@ -5,7 +5,7 @@ import shutil
 from pathlib import Path
 from ...common.module import CommandModule, ValidationError
 from ...common.context import Context
-from ...common.utils import log_info, log_success, log_error
+from ...common.utils import log_info, log_success, log_error, log_warning
 
 
 class ChromiumReplaceModule(CommandModule):
@@ -78,13 +78,16 @@ def replace_chromium_files_impl(ctx: Context, replacements=None) -> bool:
             dst_file = ctx.chromium_src / dest_relative
 
             # Check if destination exists
+            # Check if destination exists (Relaxed to Warning)
             if not dst_file.exists():
-                log_error(
-                    f"    Destination file not found in chromium_src: {dest_relative}"
+                log_warning(
+                    f"    Destination file not found in chromium_src (Creating it): {dest_relative}"
                 )
-                raise FileNotFoundError(
-                    f"Destination file not found in chromium_src: {dest_relative}"
-                )
+                # Create parent directory if needed
+                dst_file.parent.mkdir(parents=True, exist_ok=True)
+                # raise FileNotFoundError(
+                #    f"Destination file not found in chromium_src: {dest_relative}"
+                # )
 
             try:
                 # Replace the file
