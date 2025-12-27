@@ -1,19 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>eGovernmentOS</title>
-      <script type="module" crossorigin src="/chunks/newtab-CFIzEiR2.js"></script>
-      <link rel="modulepreload" crossorigin href="/chunks/product_logo-C96HwpIU.js">
-      <link rel="modulepreload" crossorigin href="/chunks/theme-toggle-DsZTZK7_.js">
-      <link rel="modulepreload" crossorigin href="/chunks/proxy-DPK92tJS.js">
-      <link rel="modulepreload" crossorigin href="/chunks/compact-ChNK-LcA.js">
-      <link rel="modulepreload" crossorigin href="/chunks/index-DQX6aDal.js">
-      <link rel="modulepreload" crossorigin href="/chunks/kbd-Ckh8Ekzc.js">
-      <link rel="stylesheet" crossorigin href="/assets/product_logo-BXOsF-xu.css">
-    </head>
-    <body>
-        <div id="root"></div>
-    </body>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eGovernmentOS</title>
+    <script type="module" crossorigin src="/chunks/newtab-CFIzEiR2.js"></script>
+    <link rel="modulepreload" crossorigin href="/chunks/product_logo-C96HwpIU.js">
+    <link rel="modulepreload" crossorigin href="/chunks/theme-toggle-DsZTZK7_.js">
+    <link rel="modulepreload" crossorigin href="/chunks/proxy-DPK92tJS.js">
+    <link rel="modulepreload" crossorigin href="/chunks/compact-ChNK-LcA.js">
+    <link rel="modulepreload" crossorigin href="/chunks/index-DQX6aDal.js">
+    <link rel="modulepreload" crossorigin href="/chunks/kbd-Ckh8Ekzc.js">
+    <link rel="stylesheet" crossorigin href="/assets/product_logo-BXOsF-xu.css">
+    <style>
+        /* Glassmorphism effect for bg-card */
+        .bg-card {
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Enhanced glassmorphism on hover */
+        .bg-card:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.6) !important;
+        }
+
+        /* Metallic blue glass effect for button */
+        button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm.font-medium {
+            background: linear-gradient(135deg,
+                    rgba(59, 130, 246, 0.85) 0%,
+                    rgba(37, 99, 235, 0.9) 50%,
+                    rgba(59, 130, 246, 0.85) 100%) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            border: 1px solid rgba(147, 197, 253, 0.5) !important;
+            box-shadow:
+                0 4px 24px 0 rgba(59, 130, 246, 0.4),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 0 0 rgba(29, 78, 216, 0.3) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        /* Metallic sheen overlay */
+        button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm.font-medium::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    transparent 100%) !important;
+            animation: shimmer 3s infinite !important;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 200%;
+            }
+        }
+
+        /* Enhanced metallic blue glass on hover */
+        button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm.font-medium:hover {
+            background: linear-gradient(135deg,
+                    rgba(59, 130, 246, 0.95) 0%,
+                    rgba(37, 99, 235, 1) 50%,
+                    rgba(59, 130, 246, 0.95) 100%) !important;
+            border: 1px solid rgba(147, 197, 253, 0.7) !important;
+            box-shadow:
+                0 6px 32px 0 rgba(59, 130, 246, 0.6),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.5),
+                inset 0 -1px 0 0 rgba(29, 78, 216, 0.4) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Active state */
+        button.inline-flex.items-center.justify-center.gap-2.whitespace-nowrap.text-sm.font-medium:active {
+            transform: translateY(0) !important;
+            box-shadow:
+                0 2px 16px 0 rgba(59, 130, 246, 0.5),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 0 rgba(29, 78, 216, 0.5) !important;
+        }
+
+        /* White theme toggle sunshine icon */
+        button[data-slot="dropdown-menu-trigger"] svg,
+        button[aria-label*="theme" i] svg,
+        button[aria-label*="Theme" i] svg {
+            color: white !important;
+            fill: white !important;
+            stroke: white !important;
+        }
+
+        /* Hide the original SVG logo */
+        img[alt="eGovernmentOS"],
+        img.h-20.w-20 {
+            visibility: hidden !important;
+        }
+
+        /* Animated border property */
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        /* Video logo - absolute positioned */
+        #video-logo-replacement {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -330px);
+            width: 170px;
+            height: 170px;
+
+            /* White background with animated glistening border */
+            background:
+                linear-gradient(#fff, #fff) padding-box,
+                conic-gradient(from var(--angle), #3b82f6 0%, #ffffff 50%, #3b82f6 100%) border-box;
+
+            /* Border thickness for the shine */
+            border: 3px solid transparent;
+
+            /* Animation for the border rotation */
+            animation: rotate-border 4s linear infinite;
+
+            /* Glass Effect Overlay */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 10px;
+
+            /* Shape */
+            border-radius: 2rem;
+
+            /* Static Shadows */
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+            overflow: hidden;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        @keyframes rotate-border {
+            to {
+                --angle: 360deg;
+            }
+        }
+
+        /* Glistening Shine Animation */
+        #video-logo-replacement::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.6),
+                    transparent);
+            transform: skewX(-25deg);
+            animation: glass-shimmer 5s infinite;
+        }
+
+        @keyframes glass-shimmer {
+            0% {
+                left: -150%;
+            }
+
+            30% {
+                left: 150%;
+            }
+
+            100% {
+                left: 150%;
+            }
+        }
+
+        #video-logo-replacement video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1.5rem;
+            box-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <!-- Video logo replacement -->
+    <div id="video-logo-replacement">
+        <video autoplay loop muted playsinline id="logo-video">
+            <source src="/assets/e-nation-animated-logo.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <script>
+        // Reliability set video playback speed
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('logo-video');
+            if (video) {
+                // Set rate immediately
+                video.playbackRate = 0.6;
+
+                // Ensure it sticks when metadata loads
+                video.addEventListener('loadedmetadata', () => {
+                    video.playbackRate = 0.6;
+                });
+
+                // Force it periodically just in case
+                setTimeout(() => { video.playbackRate = 0.6; }, 500);
+            }
+        });
+    </script>
+</body>
+
 </html>
