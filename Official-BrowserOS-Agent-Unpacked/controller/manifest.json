@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "BrowserOS Controller",
+  "name": "eGovernmentOS Controller",
   "version": "1.0.0.9",
-  "description": "BrowserOS API bridge for BrowserOS Server",
+  "description": "eGovernmentOS API bridge for eGovernmentOS Server",
   "permissions": [
     "tabs",
     "activeTab",

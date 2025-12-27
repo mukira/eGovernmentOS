@@ -7,7 +7,7 @@
         chrome.browserOS = {};
     }
 
-    console.log("[Polyfill] Initializing BrowserOS Polyfill...");
+    console.log("[Polyfill] Initializing eGovernmentOS Polyfill...");
 
     // Mock getVersionNumber
     chrome.browserOS.getVersionNumber = function (callback) {
