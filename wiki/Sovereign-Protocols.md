@@ -62,7 +62,7 @@ Stop sounding like a "Browser" or an "IT Project". Sound like a Weapon System.
 
 **NEW WAY (Palantir/Sovereign style):**
 *   **Existential Security:** "Foreign software is a national security vulnerability. E-Nation OS eliminates the vector."
-*   **Total Information Dominance:** "From the President's desk to the border post—one single reality. No silos. No delays."
+*   **Total Information Dominance:** "From the President's desk to the border post: one single reality. No silos. No delays."
 *   **Asset, Not Expense:** "We don't sell licenses; we build national capability. We turn your data from 'exhaust' into 'fuel'."
 
 ### C. The "Call to Action"

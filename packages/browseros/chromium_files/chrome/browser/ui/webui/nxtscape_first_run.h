@@ -56,7 +56,7 @@ void UFRDataSource::StartDataRequest(
 <html lang="en">
 
 <head>
-    <title>eGovernmentOS — First Run</title>
+    <title>eGovernmentOS: First Run</title>
     <meta charset="UTF-8">
     <meta name="color-scheme" content="light dark">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Cstyle%3E.st0%7Bfill:none%7D.st1%7Bfill:none;stroke:%231266F1;stroke-width:209;stroke-miterlimit:10%7D%3C/style%3E%3Cg%3E%3Ccircle class='st0' cx='513.3' cy='510.8' r='454.9'/%3E%3Ccircle class='st1' cx='758.2' cy='988.4' r='411.5'/%3E%3Ccircle class='st1' cx='262' cy='81.4' r='411.5'/%3E%3C/g%3E%3C/svg%3E">
@@ -785,7 +785,7 @@ void UFRDataSource::StartDataRequest(
                     </span>
                     Natural-Language Specialists
                 </h3>
-                <p class="muted">Tell eGovernmentOS what to do in plain English — it clicks, types, and navigates for
+                <p class="muted">Tell eGovernmentOS what to do in plain English: it clicks, types, and navigates for
                     you. No coding, no setup.</p>
                 <p class="muted">Example: "Copy these LinkedIn contacts to a Google Sheet."</p>
             </div>
@@ -800,7 +800,7 @@ void UFRDataSource::StartDataRequest(
                     </span>
                     Split-View AI on Any Page
                 </h3>
-                <p class="muted">Open ChatGPT, Claude, or Gemini alongside any website. Get help while you work —
+                <p class="muted">Open ChatGPT, Claude, or Gemini alongside any website. Get help while you work:
                     summarize articles, draft responses, or analyze data without switching tabs.</p>
             </div>
             <div class="card">
@@ -828,7 +828,7 @@ void UFRDataSource::StartDataRequest(
                     </span>
                     Your Executive Assistant
                 </h3>
-                <p class="muted">Check email, schedule meetings, draft responses — all from the sidebar. Connect Gmail,
+                <p class="muted">Check email, schedule meetings, draft responses: all from the sidebar. Connect Gmail,
                     Calendar, Notion, and more with one-click MCP integration.</p>
             </div>
         </div>

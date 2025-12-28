@@ -3,11 +3,9 @@
   "theme": "mint",
   "name": "eGovernmentOS Documentation",
   "colors": {
-    "primary": "#0066CC",
-    "light": "#3399FF",
-    "dark": "#003D7A"
+    "primary": "#1266f1"
   },
-  "favicon": "/logo/favicon.svg",
+  "favicon": "logo/favicon.svg",
   "navigation": {
     "tabs": [
       {
@@ -59,12 +57,6 @@
             "pages": [
               "integrations/n8n"
             ]
-          },
-          {
-            "group": "Contributing",
-            "pages": [
-              "contributing"
-            ]
           }
         ]
       }
@@ -72,21 +64,20 @@
     "global": {
       "anchors": [
         {
-          "anchor": "GitHub",
-          "href": "https://github.com/mukira/eGovermentOS",
-          "icon": "github"
+          "anchor": "X (Twitter)",
+          "href": "https://x.com/eGovernmentOS",
+          "icon": "x-twitter"
         },
         {
           "anchor": "Discord",
-          "href": "https://discord.gg/YKwjt5vuKr",
+          "href": "https://discord.gg/25Ur5Ss7",
           "icon": "discord"
         },
         {
           "anchor": "Slack",
-          "href": "http://dub.sh/egovernmentos-slack",
+          "href": "https://join.slack.com/t/egovermentos/shared_invite/zt-3m4b9vojq-e3fLMujKjn7EU1firgS5nw",
           "icon": "slack"
         }
-
       ]
     }
   },
@@ -98,7 +89,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "https://discord.gg/YKwjt5vuKr"
+        "href": "https://discord.gg/25Ur5Ss7"
       }
     ],
     "primary": {
@@ -109,22 +100,21 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/egovernmentos_ai",
-      "github": "https://github.com/mukira/eGovermentOS",
-      "discord": "https://discord.gg/YKwjt5vuKr",
-      "slack": "http://dub.sh/egovernmentos-slack"
+      "x": "https://x.com/eGovernmentOS",
+      "discord": "https://discord.gg/25Ur5Ss7",
+      "slack": "https://join.slack.com/t/egovermentos/shared_invite/zt-3m4b9vojq-e3fLMujKjn7EU1firgS5nw"
     }
   }
 }

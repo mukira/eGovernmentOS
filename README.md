@@ -77,11 +77,11 @@ https://github.com/user-attachments/assets/9f038216-bc24-4555-abf1-af2adcb7ebc0
 
 ## Why We're Building BrowserOS
 
-For the first time since Netscape pioneered the web in 1994, AI gives us the chance to completely reimagine the browser. We've seen tools like Cursor deliver 10x productivity gains for developers—yet everyday browsing remains frustratingly archaic.
+For the first time since Netscape pioneered the web in 1994, AI gives us the chance to completely reimagine the browser. We've seen tools like Cursor deliver 10x productivity gains for developers, yet everyday browsing remains frustratingly archaic.
 
 You're likely juggling 70+ tabs, battling your browser instead of having it assist you. Routine tasks, like ordering something from amazon or filling a form should be handled seamlessly by AI agents.
 
-At BrowserOS, we're convinced that AI should empower you by automating tasks locally and securely—keeping your data private. We are building the best browser for this future!
+At BrowserOS, we're convinced that AI should empower you by automating tasks locally and securely, keeping your data private. We are building the best browser for this future!
 
 ## How we compare
 
