@@ -3,7 +3,9 @@
   "theme": "mint",
   "name": "eGovernmentOS Documentation",
   "colors": {
-    "primary": "#1266f1"
+    "primary": "#1266f1",
+    "light": "#4B8BF5",
+    "dark": "#0B3D91"
   },
   "favicon": "logo/favicon.svg",
   "navigation": {
