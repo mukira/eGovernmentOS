@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "BrowserOS Documentation",
+  "name": "eGovernmentOS Documentation",
   "colors": {
     "primary": "#0066CC",
     "light": "#3399FF",
@@ -46,10 +46,10 @@
                 ]
               },
               {
-                "group": "BrowserOS-mcp",
+                "group": "eGovernmentOS-mcp",
                 "expanded": true,
                 "pages": [
-                  "browseros-mcp/how-to-guide"
+                  "egovernmentos-mcp/how-to-guide"
                 ]
               }
             ]
@@ -73,7 +73,7 @@
       "anchors": [
         {
           "anchor": "GitHub",
-          "href": "https://github.com/BrowserOS-ai/BrowserOS",
+          "href": "https://github.com/mukira/eGovermentOS",
           "icon": "github"
         },
         {
@@ -83,7 +83,7 @@
         },
         {
           "anchor": "Slack",
-          "href": "http://dub.sh/browseros-slack",
+          "href": "http://dub.sh/egovernmentos-slack",
           "icon": "slack"
         }
 
@@ -91,8 +91,8 @@
     }
   },
   "logo": {
-    "light": "/logo/browseros.svg",
-    "dark": "/logo/browseros.svg"
+    "light": "/logo/egovernmentos.svg",
+    "dark": "/logo/egovernmentos.svg"
   },
   "navbar": {
     "links": [
@@ -104,7 +104,7 @@
     "primary": {
       "type": "button",
       "label": "Download",
-      "href": "https://browseros.com"
+      "href": "https://egovernmentos.com"
     }
   },
   "contextual": {
@@ -121,10 +121,10 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/browseros_ai",
-      "github": "https://github.com/BrowserOS-ai/BrowserOS",
+      "x": "https://x.com/egovernmentos_ai",
+      "github": "https://github.com/mukira/eGovermentOS",
       "discord": "https://discord.gg/YKwjt5vuKr",
-      "slack": "http://dub.sh/browseros-slack"
+      "slack": "http://dub.sh/egovernmentos-slack"
     }
   }
 }

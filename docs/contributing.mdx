@@ -1,12 +1,12 @@
 ---
-title: "Contributing to BrowserOS"
+title: "Contributing to eGovernmentOS"
 description: "Let's build the best open-source browser!"
 icon: "code-branch"
 ---
 
-Hey there! Thanks for your interest in BrowserOS. Whether you're fixing bugs, adding features, improving docs, or just poking around the code, we're glad you're here.
+Hey there! Thanks for your interest in eGovernmentOS. Whether you're fixing bugs, adding features, improving docs, or just poking around the code, we're glad you're here.
 
-BrowserOS is a monorepo with two main parts:
+eGovernmentOS is a monorepo with two main parts:
 - **Agent** - The Chrome extension with AI features (TypeScript/React)
 - **Browser** - The custom Chromium build (C++/Python)
 
@@ -18,7 +18,7 @@ Most folks start with the agent since it's way easier to set up and iterate on.
   <Card
     title="GitHub Repository"
     icon="github"
-    href="https://github.com/BrowserOS-ai/BrowserOS"
+    href="https://github.com/mukira/eGovermentOS"
   >
     Star, fork, and contribute to our codebase
   </Card>
@@ -32,7 +32,7 @@ Most folks start with the agent since it's way easier to set up and iterate on.
   <Card
     title="Report Issues"
     icon="bug"
-    href="https://github.com/BrowserOS-ai/BrowserOS/issues"
+    href="https://github.com/mukira/eGovermentOS/issues"
   >
     Report bugs or suggest new features
   </Card>
@@ -40,20 +40,20 @@ Most folks start with the agent since it's way easier to set up and iterate on.
 
 ## 2. Ways to Contribute
 
-You can contribute to BrowserOS in many ways! Whether you want to build features or help out in other ways, we appreciate all contributions.
+You can contribute to eGovernmentOS in many ways! Whether you want to build features or help out in other ways, we appreciate all contributions.
 
 <Tabs>
   <Tab title="🐛 Report Bugs">
-    Found a bug? [Open an issue](https://github.com/browseros-ai/BrowserOS/issues/new) with:
+    Found a bug? [Open an issue](https://github.com/mukira/eGovermentOS/issues/new) with:
     - Clear description
     - Steps to reproduce
     - Expected vs actual behavior
     - Screenshots/videos
-    - Environment details (OS, browser version, BrowserOS version)
+    - Environment details (OS, browser version, eGovernmentOS version)
   </Tab>
 
   <Tab title="💡 Suggest Features">
-    Have an idea? [Share it here](https://github.com/browseros-ai/BrowserOS/issues/99) or chat with us on [Discord](https://discord.gg/YKwjt5vuKr).
+    Have an idea? [Share it here](https://github.com/mukira/eGovermentOS/issues/99) or chat with us on [Discord](https://discord.gg/YKwjt5vuKr).
   </Tab>
 
   <Tab title="📚 Improve Docs">
@@ -113,7 +113,7 @@ The agent is a Chrome extension that provides AI-powered automation. Most contri
 <Steps>
   <Step title="Navigate to Agent Directory">
     ```bash
-    cd packages/browseros-agent
+    cd packages/egovernmentos-agent
     ```
   </Step>
 
@@ -137,7 +137,7 @@ The agent is a Chrome extension that provides AI-powered automation. Most contri
   </Step>
 </Steps>
 
-#### Load in BrowserOS
+#### Load in eGovernmentOS
 
 <Steps>
   <Step title="Open Extensions Page">
@@ -149,7 +149,7 @@ The agent is a Chrome extension that provides AI-powered automation. Most contri
   </Step>
 
   <Step title="Load Unpacked Extension">
-    Click **Load unpacked** and select `packages/browseros-agent/dist/`
+    Click **Load unpacked** and select `packages/egovernmentos-agent/dist/`
   </Step>
 
   <Step title="Open Agent Panel">
@@ -158,7 +158,7 @@ The agent is a Chrome extension that provides AI-powered automation. Most contri
 </Steps>
 
 <Note>
-For detailed setup, architecture, and code standards, see the [Agent Contributing Guide](https://github.com/BrowserOS-ai/BrowserOS/blob/main/packages/browseros-agent/CONTRIBUTING.md).
+For detailed setup, architecture, and code standards, see the [Agent Contributing Guide](https://github.com/mukira/eGovermentOS/blob/main/packages/egovernmentos-agent/CONTRIBUTING.md).
 </Note>
 
 </Accordion>
@@ -213,7 +213,7 @@ Building the custom Chromium browser requires significant disk space and time. O
     Once you have Chromium checked out, navigate to our build system:
 
     ```bash
-    cd packages/browseros
+    cd packages/egovernmentos
     ```
   </Step>
 
@@ -261,28 +261,28 @@ Building the custom Chromium browser requires significant disk space and time. O
     </Note>
   </Step>
 
-  <Step title="Run BrowserOS">
-    After the build completes successfully, you can run BrowserOS:
+  <Step title="Run eGovernmentOS">
+    After the build completes successfully, you can run eGovernmentOS:
 
     <Tabs>
       <Tab title="macOS Debug (ARM64)">
         ```bash
-        out/Default_arm64/BrowserOS\ Dev.app/Contents/MacOS/BrowserOS\ Dev --user-data-dir=/tmp/test-profile
+        out/Default_arm64/eGovernmentOS\ Dev.app/Contents/MacOS/eGovernmentOS\ Dev --user-data-dir=/tmp/test-profile
         ```
       </Tab>
       <Tab title="macOS Debug (x64)">
         ```bash
-        out/Default_x64/BrowserOS\ Dev.app/Contents/MacOS/BrowserOS\ Dev --user-data-dir=/tmp/test-profile
+        out/Default_x64/eGovernmentOS\ Dev.app/Contents/MacOS/eGovernmentOS\ Dev --user-data-dir=/tmp/test-profile
         ```
       </Tab>
       <Tab title="macOS Release (ARM64)">
         ```bash
-        out/Default_arm64/BrowserOS.app/Contents/MacOS/BrowserOS --user-data-dir=/tmp/test-profile
+        out/Default_arm64/eGovernmentOS.app/Contents/MacOS/eGovernmentOS --user-data-dir=/tmp/test-profile
         ```
       </Tab>
       <Tab title="macOS Release (x64)">
         ```bash
-        out/Default_x64/BrowserOS.app/Contents/MacOS/BrowserOS --user-data-dir=/tmp/test-profile
+        out/Default_x64/eGovernmentOS.app/Contents/MacOS/eGovernmentOS --user-data-dir=/tmp/test-profile
         ```
       </Tab>
       <Tab title="Linux/Windows">
@@ -332,7 +332,7 @@ On your first PR, our bot will ask you to sign the Contributor License Agreement
 
 <Steps>
   <Step title="Read the CLA">
-    Read the [CLA document](https://github.com/BrowserOS-ai/BrowserOS/blob/main/CLA.md)
+    Read the [CLA document](https://github.com/mukira/eGovermentOS/blob/main/CLA.md)
   </Step>
 
   <Step title="Sign via Comment">
@@ -391,7 +391,7 @@ export type ToolInput = z.infer<typeof ToolInputSchema>
 
 <Note>
 claude.md file can be found at below:
-- Agent: [packages/browseros-agent/CLAUDE.md](https://github.com/BrowserOS-ai/BrowserOS/blob/main/packages/browseros-agent/CLAUDE.md)
+- Agent: [packages/egovernmentos-agent/CLAUDE.md](https://github.com/mukira/eGovermentOS/blob/main/packages/egovernmentos-agent/CLAUDE.md)
 </Note>
 
 ## 6. Project Structure
@@ -399,12 +399,12 @@ claude.md file can be found at below:
 ```
 monorepo/
 ├── packages/
-│   ├── browseros/              # Chromium build system
+│   ├── egovernmentos/              # Chromium build system
 │   │   ├── build/             # Python build scripts
 │   │   ├── chromium_patches/  # Patches to Chromium source
 │   │   └── resources/         # Icons, configs
 │   │
-│   └── browseros-agent/        # Chrome extension
+│   └── egovernmentos-agent/        # Chrome extension
 │       ├── src/
 │       │   ├── lib/           # Core agent logic
 │       │   ├── sidepanel/     # Side panel UI
@@ -422,8 +422,8 @@ monorepo/
   <Step title="Fork and Clone">
     Fork the repository on GitHub and clone it locally:
     ```bash
-    git clone https://github.com/YOUR-USERNAME/BrowserOS.git
-    cd BrowserOS
+    git clone https://github.com/YOUR-USERNAME/eGovermentOS.git
+    cd eGovernmentOS
     ```
   </Step>
 
@@ -467,14 +467,14 @@ Stuck? Need clarification? We're here to help.
   <Card
     title="GitHub Issues"
     icon="bug"
-    href="https://github.com/browseros-ai/BrowserOS/issues"
+    href="https://github.com/mukira/eGovermentOS/issues"
   >
     Bug reports and features
   </Card>
   <Card
     title="GitHub Discussions"
     icon="comments"
-    href="https://github.com/browseros-ai/BrowserOS/discussions"
+    href="https://github.com/mukira/eGovermentOS/discussions"
   >
     General questions
   </Card>
