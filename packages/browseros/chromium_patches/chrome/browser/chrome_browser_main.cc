@@ -17,7 +17,7 @@ diff-- git a / chrome / browser / chrome_browser_main.cc b / chrome / browser /
     if (!base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kApp) &&
         !base::CommandLine::ForCurrentProcess()->HasSwitch(switches::kAppId)) {
       +browser_creator_->AddFirstRunTabs(
-          {GURL("chrome://browseros-first-run")});
+          {GURL("chrome://egovernmentos-first-run")});
       +browser_creator_->AddFirstRunTabs(
           {GURL("https://docs.deepintelgroup.com/onboarding")});
       browser_creator_->AddFirstRunTabs(master_prefs_->new_tabs);
