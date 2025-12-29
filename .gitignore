@@ -19,3 +19,9 @@ nxtscape-cli-access.json
 gclient.json
 .env
 backup/
+
+# Large files that exceed GitHub's 100MB limit
+*.crx
+*.mov
+Official-BrowserOS-Agent-Unpacked.crx
+Screen Recording*.mov
