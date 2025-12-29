@@ -15,7 +15,9 @@
     {
       "resources": [
         "onboarding.html",
-        "options.html"
+        "options.html",
+        "assets/*.gif",
+        "assets/*.webp"
       ],
       "matches": [
         "https://browseros.com/*",

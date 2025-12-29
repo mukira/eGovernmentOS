@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding</title>
+    <script type="module" crossorigin src="/chunks/onboarding-BjjXOQBF.js"></script>
+    <link rel="modulepreload" crossorigin href="/chunks/product_logo-C96HwpIU.js">
+    <link rel="modulepreload" crossorigin href="/chunks/kbd-Ckh8Ekzc.js">
+    <link rel="modulepreload" crossorigin href="/chunks/productUrls-C-nvukbD.js">
+    <link rel="modulepreload" crossorigin href="/chunks/settings-De2ErBO4.js">
+    <link rel="modulepreload" crossorigin href="/chunks/proxy-DPK92tJS.js">
+    <link rel="stylesheet" crossorigin href="/assets/product_logo-BXOsF-xu.css">
+    <style>
+        .bg-x-black {
+            background-color: black !important;
+        }
+
+        /* Hide stray video elements that appear outside feature cards */
+        
+        /* Hide the demo video/image container in features page */
+        section img[src*="animated-launch"],
+        section img[title*="eGovernmentOS"],
+        section img[title*="MCP"],
+        div[class*="aspect-video"] img,
+        div[class*="Browser"] img {
+            display: none !important;
+        }        div[class*="aspect-video"] img,
+        div[class*="Browser"] img {        section>video,
+        main>video,
+        div:not([class*="Browser"]):not([class*="video"]):not([class*="Demo"])>video:not([controls]) {
+            display: none !important;
+        }
+
+        /* Override logo background to Metallic Silver/White */
+        header .bg-accent-blue {
+            background: linear-gradient(135deg, #ffffff 0%, #e8e8e8 50%, #ffffff 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.8) !important;
+            box-shadow:
+                0 4px 10px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+            color: #000000 !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Add a subtle metallic shine */
+        header .bg-accent-blue::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255, 255, 255, 0.8) 50%, transparent 55%);
+            transform: rotate(45deg);
+            animation: metal-shine 3s infinite;
+        }
+
+        @keyframes metal-shine {
+            0% {
+                transform: translateX(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) rotate(45deg);
+            }
+        }
+
+        /* Glassmorphism for cards - LIGHT MODE (Default) */
+        .bg-card {
+            /* Higher opacity and slight gray tint to stand out on white */
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 245, 250, 0.9) 100%) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            /* Darker border essential for visibility on white */
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            box-shadow:
+                0 15px 35px -5px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.5),
+                /* Inner white bevel */
+                inset 0 1px 0 0 rgba(255, 255, 255, 1) !important;
+        }
+
+        .bg-card:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 250, 255, 0.95) 100%) !important;
+            border: 1px solid rgba(0, 0, 0, 0.12) !important;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 0 rgba(255, 255, 255, 1) !important;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Make icon white on hover */
+        .bg-card:hover svg {
+            color: white !important;
+            stroke: white !important;
+            transition: all 0.3s ease;
+        }
+
+        /* Glassmorphism for cards - DARK MODE */
+        html.dark .bg-card {
+            background: linear-gradient(135deg, rgba(50, 50, 50, 0.5) 0%, rgba(20, 20, 20, 0.4) 100%) !important;
+            backdrop-filter: blur(30px) saturate(200%) !important;
+            -webkit-backdrop-filter: blur(30px) saturate(200%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.12) !important;
+            box-shadow:
+                0 20px 40px -10px rgba(0, 0, 0, 0.5),
+                /* Deep shadow */
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+                /* Top shine */
+                inset 0 0 30px rgba(255, 255, 255, 0.03) !important;
+            /* Inner volumetric shine */
+        }
+
+        html.dark .bg-card:hover {
+            background: linear-gradient(135deg, rgba(70, 70, 70, 0.6) 0%, rgba(30, 30, 30, 0.5) 100%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            box-shadow:
+                0 35px 70px -15px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.3) !important;
+        }
+    </style>
+    <style>
+        /* Animation for border shine */
+        @keyframes border-shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Shiny edge effect using mask */
+        .bg-card {
+            position: relative;
+            /* Ensure referencing context */
+        }
+
+        .bg-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            /* Overlap border */
+            border-radius: inherit;
+            padding: 1px;
+            /* Width of the border shine */
+            background: linear-gradient(90deg,
+                    transparent 20%,
+                    rgba(255, 255, 255, 0.8) 50%,
+                    transparent 80%);
+            background-size: 200% 100%;
+            animation: border-shimmer 4s linear infinite;
+
+            /* Mask composite to keep only the border area */
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+
+            pointer-events: none;
+            z-index: 10;
+        }
+
+
+
+        /* Glass effect for "Get Started" button */
+        /* Glass effect for "Get Started" button */
+        main a[href*="/steps/1"] {
+            position: relative;
+            /* Vibrant, deep blue gradient - significantly less transparent to be "more blue" */
+            background: linear-gradient(135deg, rgba(50, 120, 255, 0.95), rgba(10, 80, 230, 0.9)) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            /* Clearer border */
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow:
+                0 10px 25px -5px rgba(20, 80, 255, 0.5),
+                /* Stronger blue glow */
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.4) !important;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        main a[href*="/steps/1"]:hover {
+            background: linear-gradient(135deg, rgba(60, 130, 255, 1), rgba(20, 90, 240, 1)) !important;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow:
+                0 15px 35px -5px rgba(20, 80, 255, 0.6),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.5) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Shine effect on hover */
+        main a[href*="/steps/1"]::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-20deg);
+            transition: none;
+            pointer-events: none;
+        }
+
+        main a[href*="/steps/1"]:hover::after {
+            left: 150%;
+            transition: left 0.6s ease-in-out;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="root"></div>
+</body>
+
+</html>

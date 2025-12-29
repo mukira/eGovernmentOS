@@ -125,34 +125,170 @@
             /* Ensure referencing context */
         }
 
-        .bg-card::before {
+        /* Shiny Glass Effect for Blue Buttons */
+        .bg-\[var\(--accent-blue\)\] {
+            position: relative !important;
+            /* Vibrant Blue Gradient */
+            background: linear-gradient(135deg, rgba(50, 120, 255, 0.9), rgba(10, 80, 230, 0.8)) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            box-shadow:
+                0 4px 15px rgba(20, 80, 255, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+            overflow: hidden !important;
+            border-radius: 8px !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        }
+
+        .bg-\[var\(--accent-blue\)\]:hover {
+            background: linear-gradient(135deg, rgba(70, 140, 255, 1), rgba(30, 100, 255, 0.9)) !important;
+            transform: translateY(-2px) !important;
+            box-shadow:
+                0 8px 25px rgba(20, 80, 255, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+        }
+
+        /* Shine animation for blue buttons */
+        .bg-\[var\(--accent-blue\)\]::after {
             content: '';
             position: absolute;
-            inset: -1px;
-            /* Overlap border */
+            top: 0;
+            left: -150%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transform: skewX(-20deg);
+            transition: none;
+            pointer-events: none;
+        }
+
+        .bg-\[var\(--accent-blue\)\]:hover::after {
+            left: 150%;
+            transition: left 0.6s ease-in-out;
+        }
+
+        /* Enhanced Shiny Glass for eGovernmentOS Logo in Dark Mode */
+        main div:has(> img[alt="eGovernmentOS"]) {
+            position: relative;
+            background: linear-gradient(135deg, rgba(30, 60, 100, 0.3), rgba(10, 20, 40, 0.4));
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            box-shadow:
+                0 0 30px rgba(20, 80, 255, 0.15),
+                inset 0 0 20px rgba(50, 120, 255, 0.1);
+            border-radius: 1rem;
+            /* rounded-xl matches 0.75rem or 1rem usually, visual check */
+            transition: all 0.5s ease;
+            overflow: hidden;
+        }
+
+        main div:has(> img[alt="eGovernmentOS"]):hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(40, 80, 140, 0.4), rgba(15, 30, 60, 0.5));
+            border: 1px solid rgba(120, 180, 255, 0.4);
+            box-shadow:
+                0 0 50px rgba(30, 90, 255, 0.25),
+                inset 0 0 30px rgba(60, 140, 255, 0.2);
+        }
+
+        /* Inner shine for logo container */
+        main div:has(> img[alt="eGovernmentOS"])::before {
+            content: '';
+            position: absolute;
+            inset: 0;
             border-radius: inherit;
             padding: 1px;
-            /* Width of the border shine */
-            background: linear-gradient(90deg,
-                    transparent 20%,
-                    rgba(255, 255, 255, 0.8) 50%,
-                    transparent 80%);
-            background-size: 200% 100%;
-            animation: border-shimmer 4s linear infinite;
-
-            /* Mask composite to keep only the border area */
-            -webkit-mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), transparent 60%, rgba(255, 255, 255, 0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
+            pointer-events: none;
+        }
 
+        /* Rotating glow effect */
+        main div:has(> img[alt="eGovernmentOS"])::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(50, 100, 255, 0.1) 0%, transparent 70%);
+            animation: rotate-glow 6s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes rotate-glow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Enhanced Glass Effect for Feature Cards (Chat Mode / Agent Mode) */
+        /* Target the specific grid in Step 3 */
+        .md\:grid-cols-2>div {
+            position: relative !important;
+            background: linear-gradient(135deg, rgba(30, 60, 100, 0.3), rgba(10, 20, 40, 0.4)) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(100, 150, 255, 0.2) !important;
+            box-shadow:
+                0 0 30px rgba(20, 80, 255, 0.15),
+                inset 0 0 20px rgba(50, 120, 255, 0.1) !important;
+            border-radius: 1rem !important;
+            transition: all 0.5s ease !important;
+            overflow: hidden !important;
+        }
+
+        .md\:grid-cols-2>div:hover {
+            transform: scale(1.02) !important;
+            background: linear-gradient(135deg, rgba(40, 80, 140, 0.4), rgba(15, 30, 60, 0.5)) !important;
+            border: 1px solid rgba(120, 180, 255, 0.4) !important;
+            box-shadow:
+                0 0 50px rgba(30, 90, 255, 0.25),
+                inset 0 0 30px rgba(60, 140, 255, 0.2) !important;
+        }
+
+        /* Inner shine for feature cards */
+        .md\:grid-cols-2>div::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), transparent 60%, rgba(255, 255, 255, 0.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
             pointer-events: none;
             z-index: 10;
         }
+
+        /* Rotating glow effect for feature cards */
+        .md\:grid-cols-2>div::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(50, 100, 255, 0.1) 0%, transparent 70%);
+            animation: rotate-glow 8s linear infinite;
+            /* Slightly slower for larger cards */
+            pointer-events: none;
+            z-index: -1;
+        }
+
+
 
 
 
