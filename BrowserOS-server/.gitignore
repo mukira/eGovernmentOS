@@ -9,6 +9,10 @@ lerna-debug.log*
 .env.dev
 .env.prod
 
+# Ignore all .env files
+**/.env.*
+
+
 # sqlite database
 browseros.db
 browseros.db-*
@@ -150,6 +154,9 @@ packages/*/dist
 .vscode
 !.vscode/*.template.json
 !.vscode/extensions.json
+
+# Stores Zed specific settings
+.zed
 
 # yarn v2
 .yarn/cache

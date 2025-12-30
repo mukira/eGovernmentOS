@@ -20,16 +20,16 @@
  *   linux-x64, linux-arm64, windows-x64, darwin-arm64, darwin-x64, all
  */
 
-import {spawn} from 'node:child_process';
-import {readFileSync, mkdirSync} from 'node:fs';
-import {resolve, join} from 'node:path';
+import { spawn } from 'node:child_process'
+import { mkdirSync, readFileSync, rmSync } from 'node:fs'
+import { join, resolve } from 'node:path'
 
-import {parse} from 'dotenv';
+import { parse } from 'dotenv'
 
 interface BuildTarget {
-  name: string;
-  bunTarget: string;
-  outfile: string;
+  name: string
+  bunTarget: string
+  outfile: string
 }
 
 const TARGETS: Record<string, BuildTarget> = {
@@ -58,72 +58,72 @@ const TARGETS: Record<string, BuildTarget> = {
     bunTarget: 'bun-darwin-x64',
     outfile: 'dist/server/browseros-server-darwin-x64',
   },
-};
+}
 
-const MINIMAL_SYSTEM_VARS = ['PATH'];
+const MINIMAL_SYSTEM_VARS = ['PATH']
 
-function parseArgs(): {mode: 'prod' | 'dev'; targets: string[]} {
-  const args = process.argv.slice(2);
-  let mode: 'prod' | 'dev' = 'prod';
-  let targetArg = 'all';
+function parseArgs(): { mode: 'prod' | 'dev'; targets: string[] } {
+  const args = process.argv.slice(2)
+  let mode: 'prod' | 'dev' = 'prod'
+  let targetArg = 'all'
 
   for (const arg of args) {
     if (arg.startsWith('--mode=')) {
-      const modeValue = arg.split('=')[1];
+      const modeValue = arg.split('=')[1]
       if (modeValue !== 'prod' && modeValue !== 'dev') {
-        console.error(`Invalid mode: ${modeValue}. Must be 'prod' or 'dev'`);
-        process.exit(1);
+        console.error(`Invalid mode: ${modeValue}. Must be 'prod' or 'dev'`)
+        process.exit(1)
       }
-      mode = modeValue;
+      mode = modeValue
     } else if (arg.startsWith('--target=')) {
-      targetArg = arg.split('=')[1];
+      targetArg = arg.split('=')[1]
     }
   }
 
   const targets =
     targetArg === 'all'
       ? Object.keys(TARGETS)
-      : targetArg.split(',').map(t => t.trim());
+      : targetArg.split(',').map((t) => t.trim())
 
   for (const target of targets) {
     if (!TARGETS[target]) {
-      console.error(`Invalid target: ${target}`);
+      console.error(`Invalid target: ${target}`)
       console.error(
         `Available targets: ${Object.keys(TARGETS).join(', ')}, all`,
-      );
-      process.exit(1);
+      )
+      process.exit(1)
     }
   }
 
-  return {mode, targets};
+  return { mode, targets }
 }
 
 function loadEnvFile(path: string): Record<string, string> {
   try {
-    const content = readFileSync(path, 'utf-8');
-    const parsed = parse(content);
-    return parsed;
+    const content = readFileSync(path, 'utf-8')
+    const parsed = parse(content)
+    return parsed
   } catch (error) {
-    console.error(`Failed to load ${path}:`, error);
-    process.exit(1);
+    console.error(`Failed to load ${path}:`, error)
+    process.exit(1)
   }
 }
 
 function createCleanEnv(
   envVars: Record<string, string>,
 ): Record<string, string> {
-  const cleanEnv: Record<string, string> = {};
+  const cleanEnv: Record<string, string> = {}
 
   for (const varName of MINIMAL_SYSTEM_VARS) {
-    const value = process.env[varName];
+    const value = process.env[varName]
     if (value) {
-      cleanEnv[varName] = value;
+      cleanEnv[varName] = value
     }
   }
 
-  Object.assign(cleanEnv, envVars);
+  Object.assign(cleanEnv, envVars)
 
-  return cleanEnv;
+  return cleanEnv
 }
 
 function runCommand(
@@ -135,33 +135,75 @@ function runCommand(
     const child = spawn(command, args, {
       env,
       stdio: 'inherit',
-    });
+    })
 
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code === 0) {
-        resolve();
+        resolve()
       } else {
-        reject(new Error(`Command exited with code ${code}`));
+        reject(new Error(`Command exited with code ${code}`))
       }
-    });
+    })
 
-    child.on('error', error => {
-      reject(error);
-    });
-  });
+    child.on('error', (error) => {
+      reject(error)
+    })
+  })
+}
+
+async function buildSourceMapBundle(
+  buildEnv: NodeJS.ProcessEnv,
+): Promise<void> {
+  const args = [
+    'build',
+    'apps/server/src/index.ts',
+    '--outdir',
+    'dist/server/sourcemaps',
+    '--target=bun',
+    '--minify',
+    '--sourcemap=external',
+    '--env',
+    'inline',
+    '--external=*?binary',
+  ]
+
+  await runCommand('bun', args, buildEnv)
+}
+
+async function uploadSourceMaps(
+  version: string,
+  envVars: Record<string, string>,
+): Promise<void> {
+  const uploadEnv: Record<string, string> = {
+    PATH: process.env.PATH ?? '',
+    SENTRY_AUTH_TOKEN: envVars.SENTRY_AUTH_TOKEN,
+    SENTRY_ORG: envVars.SENTRY_ORG,
+    SENTRY_PROJECT: envVars.SENTRY_PROJECT,
+  }
+
+  await runCommand(
+    'sentry-cli',
+    ['sourcemaps', 'inject', 'dist/server/sourcemaps'],
+    uploadEnv,
+  )
+
+  await runCommand(
+    'sentry-cli',
+    ['sourcemaps', 'upload', '--release', version, 'dist/server/sourcemaps'],
+    uploadEnv,
+  )
 }
 
 async function buildTarget(
   target: BuildTarget,
-  mode: 'prod' | 'dev',
-  envVars: Record<string, string>,
+  buildEnv: NodeJS.ProcessEnv,
 ): Promise<void> {
-  console.log(`\n📦 Building ${target.name}...`);
+  console.log(`\n📦 Building ${target.name}...`)
 
   const args = [
     'build',
     '--compile',
-    'packages/server/src/index.ts',
+    'apps/server/src/index.ts',
     '--outfile',
     target.outfile,
     '--minify',
@@ -170,69 +212,96 @@ async function buildTarget(
     '--env',
     'inline',
     '--external=*?binary',
-  ];
-
-  const buildEnv =
-    mode === 'prod' ? createCleanEnv(envVars) : {...process.env, ...envVars};
+  ]
 
   try {
-    await runCommand('bun', args, buildEnv);
-    console.log(`✅ ${target.name} built successfully`);
+    await runCommand('bun', args, buildEnv)
+    console.log(`✅ ${target.name} built successfully`)
 
     if (target.outfile.endsWith('.exe')) {
-      console.log(`🔧 Patching Windows executable...`);
+      console.log(`🔧 Patching Windows executable...`)
       await runCommand(
         'bun',
         ['scripts/patch-windows-exe.ts', target.outfile],
         process.env,
-      );
+      )
     }
   } catch (error) {
-    console.error(`❌ Failed to build ${target.name}:`, error);
-    throw error;
+    console.error(`❌ Failed to build ${target.name}:`, error)
+    throw error
   }
 }
 
 async function main() {
-  const {mode, targets} = parseArgs();
-  const rootDir = resolve(import.meta.dir, '..');
-  process.chdir(rootDir);
+  const { mode, targets } = parseArgs()
+  const rootDir = resolve(import.meta.dir, '..')
+  process.chdir(rootDir)
 
-  console.log(`🚀 Building BrowserOS server binaries`);
-  console.log(`   Mode: ${mode}`);
-  console.log(`   Targets: ${targets.join(', ')}`);
+  const serverPkg = JSON.parse(
+    readFileSync(join(rootDir, 'apps/server/package.json'), 'utf-8'),
+  )
+  const version = serverPkg.version
 
-  const envFile = mode === 'prod' ? '.env.prod' : '.env.dev';
-  const envPath = join(rootDir, envFile);
+  console.log(`🚀 Building BrowserOS server binaries`)
+  console.log(`   Version: ${version}`)
+  console.log(`   Mode: ${mode}`)
+  console.log(`   Targets: ${targets.join(', ')}`)
+  console.log(
+    `\n   Tip: bun run version:server [patch|minor|major] to bump version`,
+  )
 
-  console.log(`\n📄 Loading environment from ${envFile}...`);
-  const envVars = loadEnvFile(envPath);
-  console.log(`   Loaded ${Object.keys(envVars).length} variables`);
+  const envFile = mode === 'prod' ? '.env.prod' : '.env.dev'
+  const envPath = join(rootDir, envFile)
+
+  console.log(`\n📄 Loading environment from ${envFile}...`)
+  const envVars = loadEnvFile(envPath)
+  console.log(`   Loaded ${Object.keys(envVars).length} variables`)
 
   if (mode === 'prod') {
     console.log(
       `\n🔒 Production mode: Using CLEAN environment (only ${envFile} + minimal system vars)`,
-    );
-    console.log(`   System vars: ${MINIMAL_SYSTEM_VARS.join(', ')}`);
+    )
+    console.log(`   System vars: ${MINIMAL_SYSTEM_VARS.join(', ')}`)
   } else {
-    console.log(`\n🔓 Development mode: Using shell environment + ${envFile}`);
+    console.log(`\n🔓 Development mode: Using shell environment + ${envFile}`)
   }
 
-  mkdirSync('dist/server', {recursive: true});
+  mkdirSync('dist/server', { recursive: true })
 
-  for (const targetKey of targets) {
-    const target = TARGETS[targetKey];
-    await buildTarget(target, mode, envVars);
+  const buildEnv =
+    mode === 'prod' ? createCleanEnv(envVars) : { ...process.env, ...envVars }
+
+  const shouldUploadSourceMaps = mode === 'prod' && envVars.SENTRY_AUTH_TOKEN
+
+  if (shouldUploadSourceMaps) {
+    console.log(`\n🗺️  Building source map bundle...`)
+    await buildSourceMapBundle(buildEnv)
+    console.log(`✅ Source map bundle created`)
   }
 
-  console.log(`\n✨ All builds completed successfully!`);
-  console.log(`\n📦 Output files:`);
   for (const targetKey of targets) {
-    console.log(`   ${TARGETS[targetKey].outfile}`);
+    const target = TARGETS[targetKey]
+    await buildTarget(target, buildEnv)
+  }
+
+  if (shouldUploadSourceMaps) {
+    console.log(
+      `\n📤 Injecting debug IDs and uploading source maps to Sentry...`,
+    )
+    await uploadSourceMaps(version, envVars)
+    console.log(`✅ Source maps injected and uploaded`)
+
+    rmSync('dist/server/sourcemaps', { recursive: true, force: true })
+  }
+
+  console.log(`\n✨ All builds completed successfully!`)
+  console.log(`\n📦 Output files:`)
+  for (const targetKey of targets) {
+    console.log(`   ${TARGETS[targetKey].outfile}`)
   }
 }
 
-main().catch(error => {
-  console.error('\n💥 Build failed:', error);
-  process.exit(1);
-});
+main().catch((error) => {
+  console.error('\n💥 Build failed:', error)
+  process.exit(1)
+})
