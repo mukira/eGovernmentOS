@@ -136,14 +136,16 @@ void BrowserOSExternalLoader::StartLoading() {
   controller_config.Set(ExternalProviderImpl::kExternalUpdateUrl,
                         browseros::kBrowserOSUpdateUrl);
   prefs.Set(browseros::kControllerExtensionId, controller_config.Clone());
-  last_config_.Set(browseros::kControllerExtensionId, std::move(controller_config));
+  last_config_.Set(browseros::kControllerExtensionId,
+                   std::move(controller_config));
 
   // Add uBlock Origin (WebStore)
   base::Value::Dict ublock_config;
   ublock_config.Set(ExternalProviderImpl::kExternalUpdateUrl,
                     "https://clients2.google.com/service/update2/crx");
   prefs.Set(browseros::kUBlockOriginExtensionId, ublock_config.Clone());
-  last_config_.Set(browseros::kUBlockOriginExtensionId, std::move(ublock_config));
+  last_config_.Set(browseros::kUBlockOriginExtensionId,
+                   std::move(ublock_config));
 
   // Load immediately
   LoadFinished(std::move(prefs));
@@ -163,7 +165,8 @@ void BrowserOSExternalLoader::OnURLFetchComplete(
   if (!response_body) {
     LOG(ERROR) << "Failed to fetch BrowserOS extensions config from "
                << config_url_.spec();
-    LoadFinished(base::Value::Dict());
+    // Fallback to defaults instead of empty dict to prevent uninstallation
+    StartLoading();
     return;
   }
 
@@ -176,7 +179,8 @@ void BrowserOSExternalLoader::ParseConfiguration(
 
   if (!parsed_json || !parsed_json->is_dict()) {
     LOG(ERROR) << "Failed to parse BrowserOS extensions config JSON";
-    LoadFinished(base::Value::Dict());
+    // Fallback to defaults instead of empty dict
+    StartLoading();
     return;
   }
 
@@ -185,7 +189,8 @@ void BrowserOSExternalLoader::ParseConfiguration(
 
   if (!extensions_dict) {
     LOG(ERROR) << "No 'extensions' key found in BrowserOS config";
-    LoadFinished(base::Value::Dict());
+    // Fallback to defaults
+    StartLoading();
     return;
   }
 
