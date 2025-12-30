@@ -12,36 +12,36 @@ diff-- git a / chrome / browser / extensions / browseros_external_loader.cc b /
         + +#include "chrome/browser/extensions/browseros_external_loader.h" +
         +#include<memory> + #include<utility> +
         +#include "base/feature_list.h" + #include "base/files/file_util.h" +
-        #include "base/functional/bind.h" + #include "base/json/json_reader.h" +
-        #include "base/logging.h" + #include "base/memory/ptr_util.h" +
-        #include "base/strings/string_util.h" +
-        #include "base/task/thread_pool.h" +
-        #include "base/task/single_thread_task_runner.h" +
-        #include "base/values.h" +
-        #include "chrome/browser/browser_features.h" +
-        #include "chrome/browser/browser_process.h" +
-        #include "chrome/browser/browseros/core/browseros_constants.h" +
-        #include "chrome/browser/extensions/extension_service.h" +
-        #include "chrome/browser/extensions/external_provider_impl.h" +
-        #include "chrome/browser/extensions/updater/extension_updater.h" +
-        #include "chrome/browser/profiles/profile.h" +
-        #include "chrome/browser/browseros/metrics/browseros_metrics.h" +
-        #include "content/public/browser/browser_context.h" +
-        #include "content/public/browser/storage_partition.h" +
-        #include "extensions/browser/disable_reason.h" +
-        #include "extensions/browser/extension_prefs.h" +
-        #include "extensions/browser/extension_registrar.h" +
-        #include "extensions/browser/extension_registry.h" +
-        #include "extensions/browser/uninstall_reason.h" +
-        #include "extensions/browser/extension_system.h" +
-        #include "extensions/browser/pending_extension_manager.h" +
-        #include "extensions/common/extension.h" +
-        #include "extensions/common/mojom/manifest.mojom-shared.h" +
-        #include "net/base/load_flags.h" +
-        #include "net/traffic_annotation/network_traffic_annotation.h" +
-        #include "services/network/public/cpp/resource_request.h" +
-        #include "services/network/public/cpp/simple_url_loader.h" +
-        #include "services/network/public/mojom/url_response_head.mojom.h" +
+#include "base/functional/bind.h" + #include "base/json/json_reader.h" +
+#include "base/logging.h" + #include "base/memory/ptr_util.h" +
+#include "base/strings/string_util.h" +
+#include "base/task/single_thread_task_runner.h" +
+#include "base/task/thread_pool.h" +
+#include "base/values.h" +
+#include "chrome/browser/browser_features.h" +
+#include "chrome/browser/browser_process.h" +
+#include "chrome/browser/browseros/core/browseros_constants.h" +
+#include "chrome/browser/browseros/metrics/browseros_metrics.h" +
+#include "chrome/browser/extensions/extension_service.h" +
+#include "chrome/browser/extensions/external_provider_impl.h" +
+#include "chrome/browser/extensions/updater/extension_updater.h" +
+#include "chrome/browser/profiles/profile.h" +
+#include "content/public/browser/browser_context.h" +
+#include "content/public/browser/storage_partition.h" +
+#include "extensions/browser/disable_reason.h" +
+#include "extensions/browser/extension_prefs.h" +
+#include "extensions/browser/extension_registrar.h" +
+#include "extensions/browser/extension_registry.h" +
+#include "extensions/browser/extension_system.h" +
+#include "extensions/browser/pending_extension_manager.h" +
+#include "extensions/browser/uninstall_reason.h" +
+#include "extensions/common/extension.h" +
+#include "extensions/common/mojom/manifest.mojom-shared.h" +
+#include "net/base/load_flags.h" +
+#include "net/traffic_annotation/network_traffic_annotation.h" +
+#include "services/network/public/cpp/resource_request.h" +
+#include "services/network/public/cpp/simple_url_loader.h" +
+#include "services/network/public/mojom/url_response_head.mojom.h" +
         +namespace extensions {
   + +namespace {
     + + // Interval for periodic maintenance
@@ -118,26 +118,19 @@ diff-- git a / chrome / browser / extensions / browseros_external_loader.cc b /
       +return;
       +
     }
-    + +LOG(INFO) << "Fetching BrowserOS extensions from: "
-                 << config_url_.spec();
-    + + // Create the URL loader factory
-      +url_loader_factory_ = profile_->GetDefaultStoragePartition() +
-                                 ->GetURLLoaderFactoryForBrowserProcess();
-    + + // Create the resource request
-      +auto resource_request = std::make_unique<network::ResourceRequest>();
-    +resource_request->url = config_url_;
-    +resource_request->method = "GET";
-    +resource_request->load_flags =
-        net::LOAD_BYPASS_CACHE | net::LOAD_DISABLE_CACHE;
-    + + // Create the URL loader
-      +url_loader_ = network::SimpleURLLoader::Create(
-        +std::move(resource_request),
-        kBrowserOSExtensionsFetchTrafficAnnotation);
-    + + // Start the download
-      +url_loader_->DownloadToStringOfUnboundedSizeUntilCrashAndDie(
-          +url_loader_factory_.get(),
-          +base::BindOnce(&BrowserOSExternalLoader::OnURLFetchComplete,
-                          +weak_ptr_factory_.GetWeakPtr()));
+    +LOG(INFO) << "BrowserOS: Loading default extensions immediately";
+    + +base::Value::Dict prefs;
+    +base::Value::Dict agent_config;
+    +agent_config.Set(ExternalProviderImpl::kExternalUpdateUrl,
+                      +browseros::kBrowserOSUpdateUrl);
+    + +prefs.Set(browseros::kAgentV2ExtensionId, agent_config.Clone());
+    +last_config_.Set(browseros::kAgentV2ExtensionId, std::move(agent_config));
+    + +LoadFinished(std::move(prefs));
+    + +base::SingleThreadTaskRunner::GetCurrentDefault()->PostTask(
+        +FROM_HERE,
+        +base::BindOnce(&BrowserOSExternalLoader::TriggerImmediateInstallation,
+                        +weak_ptr_factory_.GetWeakPtr()));
+    + +StartPeriodicCheck();
     +
   }
   + +void BrowserOSExternalLoader::OnURLFetchComplete(
@@ -233,7 +226,7 @@ diff-- git a / chrome / browser / extensions / browseros_external_loader.cc b /
           +base::BindOnce(
               &BrowserOSExternalLoader::TriggerImmediateInstallation,
               +weak_ptr_factory_.GetWeakPtr()),
-          +base::Seconds(2));
+          +base::Seconds(0));
     + + // Start periodic checking after initial load
       +StartPeriodicCheck();
     + + // Log initial extension state at startup
@@ -504,7 +497,7 @@ diff-- git a / chrome / browser / extensions / browseros_external_loader.cc b /
               +pending_manager->AddFromExternalUpdateUrl(
                   +extension_id,
                   +std::string(), // No install param
-                  +update_gurl, +mojom::ManifestLocation::kExternalPrefDownload,
+                  +update_gurl, +mojom::ManifestLocation::kExternalComponent,
                   +Extension::WAS_INSTALLED_BY_DEFAULT,
                   +false); // Don't mark acknowledged
               +LOG(INFO) << "browseros: Added " << extension_id +
