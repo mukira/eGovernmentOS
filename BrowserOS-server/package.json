@@ -48,7 +48,8 @@
     "typescript": "^5.9.2"
   },
   "trustedDependencies": [
-    "lefthook"
+    "lefthook",
+    "node-pty"
   ],
   "engines": {
     "bun": "1.3.5",

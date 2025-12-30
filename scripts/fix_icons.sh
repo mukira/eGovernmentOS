@@ -23,7 +23,17 @@ if [ ! -d "packages/browseros" ]; then
 fi
 
 echo "🛑 Closing running instances..."
+# Kill any processes on our ports (CDP:9222, MCP:9223-9225, Dev:9100,9200,9300)
+PORTS="9222 9223 9224 9225 9100 9200 9300"
+for port in $PORTS; do
+    pid=$(lsof -ti tcp:$port || true)
+    if [ ! -z "$pid" ]; then
+        echo "   - Killing process on port $port (PID: $pid)"
+        kill -9 $pid 2>/dev/null || true
+    fi
+done
 pkill -f "eGovernmentOS Dev" || true
+pkill -f "browseros_server" || true
 
 echo "🚀 Starting Complete Icon Refresh Cycle..."
 
@@ -58,6 +68,10 @@ echo "🔨 Running Incremental Build (Resources + Compile)..."
         --chromium-src "$CHROMIUM_SRC" \
         --modules chromium_replace,resources,compile
 )
+
+# 2.5 Bundle BrowserOS Server
+echo "🚀 Bundling BrowserOS Server with Browser..."
+bash "$(dirname "$0")/bundle_server.sh" || echo "⚠️  Warning: Server bundling failed, continuing anyway..."
 
 # 3. Manual Sync (The Fix)
 echo "📦 Syncing resources to App Bundle..."
@@ -165,9 +179,12 @@ FRESH_PROFILE=$(mktemp -d -t "egov_fresh_profile")
 echo "👤 Fresh Temporary Profile Created: $FRESH_PROFILE"
 
 # Launch with arguments for a fresh start
+export CHROME_LOG_FILE="$FRESH_PROFILE/chrome_debug.log"
 open -n "$APP_BUNDLE" --args \
     --user-data-dir="$FRESH_PROFILE" \
     --first-run \
     --no-default-browser-check \
-    --no-first-run-default-browser
+    --no-first-run-default-browser \
+    --enable-logging=stderr \
+    --v=1
 
