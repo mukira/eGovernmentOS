@@ -30,14 +30,14 @@ inline constexpr char kAgentV1ExtensionId[] =
 
 // Agent V2 Extension ID
 inline constexpr char kAgentV2ExtensionId[] =
-    "bflpfmnmnokmjhmgnolecpppdbdophmk";
+    "mgphcfmknmalldknlmnplmajpmhkfkip";
 
 // BrowserOS extension config URLs
-// DISABLED: Temporarily disabled per user request
-inline constexpr char kBrowserOSConfigUrl[] = "";
-//    "https://cdn.browseros.com/extensions/extensions.json";
-inline constexpr char kBrowserOSAlphaConfigUrl[] = "";
-//    "https://cdn.browseros.com/extensions/extensions.alpha.json";
+// ENABLED: Using deepintelgroup CDN
+inline constexpr char kBrowserOSConfigUrl[] =
+    "https://cdn.deepintelgroup.com/extensions/extensions.json";
+inline constexpr char kBrowserOSAlphaConfigUrl[] =
+    "https://cdn.deepintelgroup.com/extensions/extensions.alpha.json";
 
 // Bug Reporter Extension ID
 inline constexpr char kBugReporterExtensionId[] =
@@ -45,7 +45,7 @@ inline constexpr char kBugReporterExtensionId[] =
 
 // Controller Extension ID
 inline constexpr char kControllerExtensionId[] =
-    "nlnihljpboknmfagkikhkdblbedophja";
+    "aekppopahgfpoimbgcnafdfdihnfeofp";
 
 // uBlock Origin Extension ID (Chrome Web Store)
 inline constexpr char kUBlockOriginExtensionId[] =
@@ -54,12 +54,15 @@ inline constexpr char kUBlockOriginExtensionId[] =
 // BrowserOS CDN update manifest URL
 // Used for extensions installed from local .crx files that don't have
 // an update_url in their manifest
-// DISABLED: Temporarily disabled per user request
-inline constexpr char kBrowserOSUpdateUrl[] = "";
-//    "https://cdn.browseros.com/extensions/update-manifest.xml";
+// ENABLED: Using deepintelgroup CDN
+inline constexpr char kBrowserOSUpdateUrl[] =
+    "https://cdn.deepintelgroup.com/extensions/update-manifest.xml";
 
-// chrome://browseros host constant
-inline constexpr char kBrowserOSHost[] = "browseros";
+// chrome://egovernmentos host constant (lowercase for matching)
+inline constexpr char kBrowserOSHost[] = "egovernmentos";
+
+// chrome://eGovernmentOS host constant (CamelCase for display)
+inline constexpr char kBrowserOSHostDisplay[] = "eGovernmentOS";
 
 // URL route mapping for chrome://browseros/* virtual URLs
 struct BrowserOSURLRoute {
@@ -148,7 +151,8 @@ inline std::string GetBrowserOSVirtualURL(const std::string &extension_id,
 
     // Exact hash match - return immediately
     if (normalized_ref == route.extension_hash) {
-      return std::string("chrome://") + kBrowserOSHost + route.virtual_path;
+      return std::string("chrome://") + kBrowserOSHostDisplay +
+             route.virtual_path;
     }
 
     // Track fallback: route with empty hash for same page
@@ -159,7 +163,7 @@ inline std::string GetBrowserOSVirtualURL(const std::string &extension_id,
 
   // No exact match - use fallback if available
   if (fallback_route) {
-    return std::string("chrome://") + kBrowserOSHost +
+    return std::string("chrome://") + kBrowserOSHostDisplay +
            fallback_route->virtual_path;
   }
 
@@ -173,10 +177,12 @@ struct BrowserOSExtensionInfo {
 };
 
 inline constexpr BrowserOSExtensionInfo kBrowserOSExtensions[] = {
-    {kAgentV1ExtensionId, true, true},
-    {kAgentV2ExtensionId, false, false},
+    // Note: Agent & Controller managed dynamically by BrowserOSExternalLoader
+    // We add them here so IsBrowserOSExtension returns true for safety
+    // bypasses.
+    {kAgentV2ExtensionId, true, false},
+    {kControllerExtensionId, true, false},
     {kBugReporterExtensionId, true, false},
-    {kControllerExtensionId, false, false},
     // ublock origin gets installed from chrome web store
     {kUBlockOriginExtensionId, false, false},
 };

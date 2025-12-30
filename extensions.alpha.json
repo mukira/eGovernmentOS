@@ -1,0 +1,13 @@
+{
+	"extensions": {
+		"nlnihljpboknmfagkikhkdblbedophja": {
+			"external_update_url": "https://cdn.deepintelgroup.com/extensions/update-manifest.alpha.xml"
+		},
+		"djhdjhlnljbjgejbndockeedocneiaei": {
+			"external_update_url": "https://cdn.deepintelgroup.com/extensions/update-manifest.alpha.xml"
+		},
+		"cjpalhdlnbpafiamejdnhcphjbkeiagm": {
+			"external_update_url": "https://clients2.google.com/service/update2/crx"
+		}
+	}
+}

@@ -156,9 +156,13 @@ killall lsd || true
 echo "✅ Success! Icons have been rebuilt and updated."
 echo "🚀 Launching App as a NEW USER (Fresh Profile)..."
 
+# 6. SUPER CLEAN STATE: Wiping old temporary profiles
+echo "🧹 Wiping old temporary profiles for a super clean state..."
+rm -rf /tmp/egov_fresh_profile.* 2>/dev/null || true
+
 # Create a temporary directory for a fresh user profile
 FRESH_PROFILE=$(mktemp -d -t "egov_fresh_profile")
-echo "👤 Temporary Profile: $FRESH_PROFILE"
+echo "👤 Fresh Temporary Profile Created: $FRESH_PROFILE"
 
 # Launch with arguments for a fresh start
 open -n "$APP_BUNDLE" --args \
