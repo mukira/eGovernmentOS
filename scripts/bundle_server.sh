@@ -11,7 +11,7 @@ CHROMIUM_OUT="/Users/Mukira/chromium/src/out/Default_x64"
 APP_BUNDLE="$CHROMIUM_OUT/eGovernmentOS Dev.app"
 RESOURCES_BASE="$APP_BUNDLE/Contents/Resources"
 SERVER_BUNDLE="$RESOURCES_BASE/BrowserOSServer/default"
-SERVER_SOURCE="/Users/Mukira/Downloads/BrowserOS/BrowserOS-server"
+SERVER_SOURCE="/Users/Mukira/Downloads/BrowserOS/BrowserOS-agent"
 
 # Check if app bundle exists
 if [ ! -d "$APP_BUNDLE" ]; then

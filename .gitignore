@@ -25,3 +25,13 @@ backup/
 *.mov
 Official-BrowserOS-Agent-Unpacked.crx
 Screen Recording*.mov
+
+# Runtime logs and DB
+*.log
+*.db
+*.db-shm
+*.db-wal
+temp_pty/
+.env*
+!manifest.json
+**/node_modules/

@@ -186,5 +186,6 @@ open -n "$APP_BUNDLE" --args \
     --no-default-browser-check \
     --no-first-run-default-browser \
     --enable-logging=stderr \
-    --v=1
+    --v=1 \
+    --browseros-agent-port=9100
 

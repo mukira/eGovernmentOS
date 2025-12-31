@@ -1,0 +1,59 @@
+{
+  "name": "browseros-monorepo",
+  "version": "1.0.0",
+  "description": "BrowserOS monorepo - server, extension, and shared packages",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "start:server": "bun --env-file=.env.development apps/server/src/index.ts",
+    "start:agent": "bun run --filter agent dev",
+
+    "build:server": "bun scripts/build_server.ts --mode=prod --target=all",
+    "build:agent": "bun run --filter agent build",
+    "build:ext": "bun run --filter browseros-controller build",
+
+    "test": "bun run test:cleanup && bun --env-file=.env.development test apps/server/tests/tools apps/server/tests/common",
+    "test:all": "bun run test:cleanup && bun --env-file=.env.development test",
+    "test:cdp": "bun run test:cleanup && bun --env-file=.env.development test apps/server/tests/tools/cdp-based",
+    "test:controller": "bun run test:cleanup && bun --env-file=.env.development test apps/server/tests/tools/controller-based",
+    "test:integration": "bun run test:cleanup && bun --env-file=.env.development test apps/server/tests/server.integration.test.ts",
+    "test:cleanup": "./apps/server/tests/__helpers__/cleanup.sh",
+
+    "typecheck": "tsc --build",
+    "lint": "bunx biome check",
+    "lint:fix": "bunx biome check --write --unsafe",
+
+    "clean": "rimraf dist"
+  },
+  "repository": "browseros-ai/BrowserOS-server",
+  "author": "BrowserOS",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/browseros-ai/BrowserOS/issues"
+  },
+  "homepage": "https://github.com/browseros-ai/BrowserOS#readme",
+  "devDependencies": {
+    "@biomejs/biome": "2.3.10",
+    "@sentry/cli": "^2.42.2",
+    "@types/node": "^24.3.3",
+    "dotenv": "^17.2.3",
+    "globals": "^16.4.0",
+    "lefthook": "^2.0.12",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.2"
+  },
+  "trustedDependencies": [
+    "lefthook"
+  ],
+  "engines": {
+    "bun": "1.3.5",
+    "node": "please-use-bun",
+    "npm": "please-use-bun",
+    "yarn": "please-use-bun",
+    "pnpm": "please-use-bun"
+  }
+}
